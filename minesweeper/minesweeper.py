@@ -3,6 +3,7 @@ import math
 import numpy as np
 import random
 import time
+import mss
 
 class Minesweeper(object):
     def __init__(self, ROWS = 10, COLS = 10, SIZEOFSQ = 100, MINES = 13, display = False):
@@ -15,7 +16,6 @@ class Minesweeper(object):
 
         self.ROWS = ROWS
         self.COLS = COLS
-        self.SIZEOFSQ = SIZEOFSQ
         self.MINES = MINES
         self.display = display
 
@@ -25,10 +25,17 @@ class Minesweeper(object):
 
 
         if display: #Load pygame stuff
+
+            #Scale to resolutions
+            with mss.mss() as sct:
+                img = np.array(sct.grab(sct.monitors[1]))
+                self.SIZEOFSQ = int(SIZEOFSQ * img.shape[1] / 3840)
+                SIZEOFSQ = self.SIZEOFSQ
+
             pygame.init()
             pygame.font.init()
 
-            self.myfont = pygame.font.SysFont("monospace-bold", 100)
+            self.myfont = pygame.font.SysFont("monospace-bold", SIZEOFSQ)
             self.screen = pygame.display.set_mode((COLS * SIZEOFSQ, ROWS * SIZEOFSQ))
 
         self.initGame()
