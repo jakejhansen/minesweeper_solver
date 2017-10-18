@@ -23,6 +23,8 @@ class Minesweeper(object):
         self.state = np.zeros((self.ROWS, self.COLS), dtype=object)
         self.state_last = np.copy(self.state)
 
+        self.won = 0
+        self.lost = 0
 
         if display: #Load pygame stuff
 
@@ -44,6 +46,7 @@ class Minesweeper(object):
     def initGame(self):
         if self.display:
             self.initPattern()
+            pygame.display.set_caption('Minesweeper |            Won: {}   Lost: {}'.format(self.won, self.lost))
         self.grid = self.initBoard(startcol = 5, startrow = 5)
         self.state = np.ones((self.ROWS, self.COLS), dtype=object) * 'U'
         self.state_last = np.copy(self.state)
@@ -174,6 +177,7 @@ class Minesweeper(object):
 
         #If press a bomb game over, start new game and return bad reward, -10 in this case
         if self.grid[row][col] == "B":
+            self.lost += 1
             self.initGame()
             return({"s" : self.state, "r" : -10})
 
@@ -181,6 +185,13 @@ class Minesweeper(object):
         self.reveal(col, row , np.zeros_like(self.grid))
         if self.display == True:
             pygame.display.flip()
+
+
+        #Winning condition
+        if np.sum(self.state == "U") == self.MINES:
+            self.won += 1
+            self.initGame()
+            return({"s" : self.state, "r" : 10})
 
         #Get the reward for the given action
         reward = self.compute_reward()
@@ -192,7 +203,7 @@ class Minesweeper(object):
         """Computes the reward for a given action"""
 
         #Reward = 1 if we get less unknowns, 0 otherwise 
-        if (np.sum(self.state_last == 'U') - np.sum(self.state == 'U')) > 0:
+        if (np.sum(self.state_last == 'U') - np.sum(self.state == 'U')) == self.MINES:
             reward = 1
         else:
             reward = 0
@@ -278,9 +289,10 @@ if __name__ == "__main__":
     game = Minesweeper(display=True)
     game.printState()
 
-    #i = 0
+    i = 0
     #start = time.time()
     while True:
+
         inp = input("Enter input (ROW,COL)")
         row = int(inp[1])
         col = int(inp[3])
@@ -288,7 +300,7 @@ if __name__ == "__main__":
         game.printState()
         print("\nReward = {}".format(v["r"]))
 
-        """ #Test how fast it can run:
+        """#Test how fast it can run:
         i += 1
         print(i)
         act = [np.random.randint(0,10), np.random.randint(0,10)]
