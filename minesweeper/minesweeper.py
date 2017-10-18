@@ -57,7 +57,7 @@ class Minesweeper(object):
 
         COLS = self.COLS
         ROWS = self.ROWS
-        grid = self.grid.copy()
+        grid = np.zeros((self.ROWS, self.COLS), dtype=object)
         mines = self.MINES
 
         #Randomly place bombs
@@ -278,6 +278,8 @@ if __name__ == "__main__":
     game = Minesweeper(display=True)
     game.printState()
 
+    #i = 0
+    #start = time.time()
     while True:
         inp = input("Enter input (ROW,COL)")
         row = int(inp[1])
@@ -286,4 +288,14 @@ if __name__ == "__main__":
         game.printState()
         print("\nReward = {}".format(v["r"]))
 
+        """ #Test how fast it can run:
+        i += 1
+        print(i)
+        act = [np.random.randint(0,10), np.random.randint(0,10)]
+        game.action(act[0],act[1])
+        if i >= 10000:
+            break
+        """
+
+    #print("Took: " + str(time.time()-start))
 
