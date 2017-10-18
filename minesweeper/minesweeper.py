@@ -263,6 +263,9 @@ class Minesweeper(object):
 
         pygame.display.flip()
 
+    def get_state(self):
+        return self.state
+
 if __name__ == "__main__":
 
     game = Minesweeper(display=True)
