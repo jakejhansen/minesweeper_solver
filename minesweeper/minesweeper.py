@@ -4,6 +4,7 @@ import numpy as np
 import random
 import time
 import mss
+import _thread
 
 class Minesweeper(object):
     def __init__(self, ROWS = 10, COLS = 10, SIZEOFSQ = 100, MINES = 13, display = False):
@@ -39,9 +40,20 @@ class Minesweeper(object):
 
             self.myfont = pygame.font.SysFont("monospace-bold", SIZEOFSQ)
             self.screen = pygame.display.set_mode((COLS * SIZEOFSQ, ROWS * SIZEOFSQ))
+            _thread.start_new_thread(self.pyloop())
 
         self.initGame()
 
+    def pyloop(self):
+        while True:
+            for event in pygame.event.get():
+            # check for closing window
+                if event.type == pygame.QUIT:
+                    running = False
+                
+                self.initGame()
+
+                #pygame.display.flip()
 
     def initGame(self):
         if self.display:
@@ -203,7 +215,7 @@ class Minesweeper(object):
         """Computes the reward for a given action"""
 
         #Reward = 1 if we get less unknowns, 0 otherwise 
-        if (np.sum(self.state_last == 'U') - np.sum(self.state == 'U')) == self.MINES:
+        if (np.sum(self.state_last == 'U') - np.sum(self.state == 'U')) > 0:
             reward = 1
         else:
             reward = 0
@@ -283,6 +295,8 @@ class Minesweeper(object):
 
     def get_state(self):
         return self.state
+
+
 
 if __name__ == "__main__":
 
