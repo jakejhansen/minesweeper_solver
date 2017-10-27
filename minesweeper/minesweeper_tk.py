@@ -1,9 +1,10 @@
-import pygame
 import math
 import numpy as np
 import random
 import time
 import mss
+from tkinter import *
+from tkinter import font
 
 class Minesweeper(object):
     def __init__(self, ROWS = 10, COLS = 10, SIZEOFSQ = 100, MINES = 13, display = False):
@@ -25,7 +26,6 @@ class Minesweeper(object):
 
         self.won = 0
         self.lost = 0
-
         if display: #Load pygame stuff
 
             #Scale to resolutions
@@ -34,19 +34,69 @@ class Minesweeper(object):
                 self.SIZEOFSQ = int(SIZEOFSQ * img.shape[1] / 3840)
                 SIZEOFSQ = self.SIZEOFSQ
 
-            pygame.init()
-            pygame.font.init()
+            self.root = Tk()
+            self.C = Canvas(self.root, bg="white", height= COLS * SIZEOFSQ - 1, width = ROWS * SIZEOFSQ - 1)
 
-            self.myfont = pygame.font.SysFont("monospace-bold", SIZEOFSQ)
-            self.screen = pygame.display.set_mode((COLS * SIZEOFSQ, ROWS * SIZEOFSQ))
+
 
         self.initGame()
+        self.drawState()
+
+
+    def drawState(self):
+        c1 = "#0285DF"
+        c2 = "#0491DF" 
+        #Draw checked pattern
+        for row in range(self.ROWS):
+            for col in range(self.COLS):
+                if self.checkpattern(col, row):
+                    c = c1
+                else:
+                    c = c2
+
+                self.C.create_rectangle(col*self.SIZEOFSQ,row*self.SIZEOFSQ, col*self.SIZEOFSQ + self.SIZEOFSQ ,row*self.SIZEOFSQ + self.SIZEOFSQ, fill=c, width=0)
+
+        #Draw state
+        print(self.state)
+        for row in range(self.ROWS):
+            for col in range(self.COLS):
+                cell = self.state[row][col]
+                if cell == 'E' or cell != 'U':
+                    if self.checkpattern(col,row):
+                        c = "#F2F4F7"
+                    else:
+                        c = "#F7F9FC"
+
+                    self.C.create_rectangle(col*self.SIZEOFSQ,row*self.SIZEOFSQ, col*self.SIZEOFSQ + self.SIZEOFSQ ,row*self.SIZEOFSQ + self.SIZEOFSQ, fill=c, width=0)
+                
+                if cell != 'U' and cell !='E':    
+                    if cell == 1:
+                        c2 = "#00CC00"
+                    elif cell == 2:
+                        c2 = "#FFCC00"
+                    elif cell == 3:
+                        c2 = "#CC0000"
+                    elif cell == 4:
+                        c2 = "#003399"
+                    elif cell == 5:
+                        c2 = "#FF6600"
+                    elif cell == 6:
+                        c2 = "#FF6600"
+                    elif cell == 'flag':
+                        c2 = "#FF0000"
+
+
+                    #num = np.random.randint(len(font.families()))
+                    #print("({},{}) : {}".format(row,col,num))
+                    f = self.C.create_text(col*self.SIZEOFSQ + int(0.5*self.SIZEOFSQ),row*self.SIZEOFSQ + int(0.5*self.SIZEOFSQ), \
+                        font=(font.families()[101], 24, "bold"), fill = c2) #101 pretty good font
+                    self.C.itemconfigure(f, text=str(cell))
+
+        self.C.pack()
+        #self.root.mainloop()    
 
 
     def initGame(self):
-        if self.display:
-            self.initPattern()
-            pygame.display.set_caption('Minesweeper |            Won: {}   Lost: {}'.format(self.won, self.lost))
         self.grid = self.initBoard(startcol = 5, startrow = 5)
         self.state = np.ones((self.ROWS, self.COLS), dtype=object) * 'U'
         self.state_last = np.copy(self.state)
@@ -149,9 +199,6 @@ class Minesweeper(object):
             checked[row][col] = checked[row][col] + 1
             if self.grid[row][col] != 'B':
 
-                if self.display:
-                    self.drawSpirit(col, row, self.grid[row][col])
-
                 #Reveal to state space
                 self.state[row][col] = self.grid[row][col]
 
@@ -164,9 +211,6 @@ class Minesweeper(object):
         elif press == "RM":
             #Draw flag, not used for agent
             pass
-
-            if self.display:
-                self.drawSpirit(col, row, "flag")
 
 
 
@@ -184,7 +228,7 @@ class Minesweeper(object):
         #Take action and reveal new state
         self.reveal(col, row , np.zeros_like(self.grid))
         if self.display == True:
-            pygame.display.flip()
+            self.drawState()
 
 
         #Winning condition
@@ -211,43 +255,6 @@ class Minesweeper(object):
 
         self.state_last = np.copy(self.state)
         return(reward)
-
-
-    def drawSpirit(self, col, row, type):
-        """
-        Draws a spirit at pos col, row of type = [E (empty), B (bomb), 1, 2, 3, 4, 5, 6, F (flag)]
-        """
-        myfont = self.myfont
-        SIZEOFSQ = self.SIZEOFSQ
-
-        if type == 'E':
-            if self.checkpattern(col,row):
-                c = (242, 244, 247)
-            else:
-                c = (247, 249, 252)
-            pygame.draw.rect(self.screen, c, pygame.Rect(col*SIZEOFSQ, row*SIZEOFSQ, SIZEOFSQ, SIZEOFSQ))
-
-        else:
-            self.drawSpirit(col, row, 'E')
-            if type == 1:
-                text = myfont.render("1", 1, (0, 204, 0))
-            elif type == 2:
-                text = myfont.render("2", 1, (255, 204, 0))
-            elif type == 3:
-                text = myfont.render("3", 1, (204, 0, 0))
-            elif type == 4:
-                text = myfont.render("4", 1, (0, 51, 153))
-            elif type == 5:
-                text = myfont.render("5", 1, (255, 102, 0))
-            elif type == 6:
-                text = myfont.render("6", 1, (255, 102, 0))
-            elif type == 'flag':
-                text = myfont.render("F", 1, (255, 0, 0))
-
-            #Get the text rectangle and center it inside the rectangles
-            textRect = text.get_rect()
-            textRect.center = (col*self.SIZEOFSQ + int(0.5*self.SIZEOFSQ)),(row*self.SIZEOFSQ + int(0.5*self.SIZEOFSQ))
-            self.screen.blit(text, textRect)
             
 
 
@@ -267,8 +274,8 @@ class Minesweeper(object):
     def initPattern(self):
         #Initialize pattern:
 
-        c1 = (4, 133, 223) #color1
-        c2 = (4, 145, 223) #color2
+        c1 = "#0285DF"
+        c2 = "#0491DF"          
         rects = []
         for row in range(self.ROWS):
             for col in range(self.COLS):
@@ -277,12 +284,14 @@ class Minesweeper(object):
                 else:
                     c = c2
 
-                rects.append(pygame.draw.rect(self.screen, c, pygame.Rect(col*self.SIZEOFSQ, row*self.SIZEOFSQ, self.SIZEOFSQ, self.SIZEOFSQ)))
+                self.C.create_rectangle(col*self.SIZEOFSQ,row*self.SIZEOFSQ, col*self.SIZEOFSQ + self.SIZEOFSQ ,row*self.SIZEOFSQ + self.SIZEOFSQ, fill=c)
+                self.C.pack()
+                self.root.mainloop()
 
-        pygame.display.flip()
 
     def get_state(self):
         return self.state
+
 
 
 
