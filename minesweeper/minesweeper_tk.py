@@ -89,7 +89,7 @@ class Minesweeper(object):
                     #num = np.random.randint(len(font.families()))
                     #print("({},{}) : {}".format(row,col,num))
                     f = self.C.create_text(col*self.SIZEOFSQ + int(0.5*self.SIZEOFSQ),row*self.SIZEOFSQ + int(0.5*self.SIZEOFSQ), \
-                        font=(font.families()[101], 24, "bold"), fill = c2) #101 pretty good font
+                        font=('Nimbus Sans L', 24, "bold"), fill = c2) #101 pretty good font
                     self.C.itemconfigure(f, text=str(cell))
 
         self.C.pack()
