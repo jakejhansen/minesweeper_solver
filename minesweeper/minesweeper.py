@@ -52,7 +52,7 @@ class Minesweeper(object):
         self.state_last = np.copy(self.state)
 
 
-        self.action(5,5) #Hack alert, to start off with non empty board. Can be removed but then agent has to learn
+        self.action((5,5)) #Hack alert, to start off with non empty board. Can be removed but then agent has to learn
                          #what to do when the board starts out empty. 
 
     def initBoard(self, startcol, startrow):
@@ -170,12 +170,13 @@ class Minesweeper(object):
 
 
 
-    def action(self, row, col):
+    def action((self, a)):
         """ External action, taken by human or agent
-            row,col: integer - where the agent want to press
+            a: tuple - row and column of the tile to act on
          """
 
         #If press a bomb game over, start new game and return bad reward, -10 in this case
+        row, col = a[0], a[1]
         if self.grid[row][col] == "B":
             self.lost += 1
             self.initGame()
@@ -298,7 +299,7 @@ if __name__ == "__main__":
         inp = input("Enter input (ROW,COL)")
         row = int(inp[1])
         col = int(inp[3])
-        v = game.action(row, col)
+        v = game.action((row, col))
         game.printState()
         print("\nReward = {}".format(v["r"]))
 
