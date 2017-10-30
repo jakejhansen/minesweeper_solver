@@ -40,7 +40,8 @@ class Minesweeper(object):
 
 
         self.initGame()
-        self.drawState()
+        if display:
+            self.drawState()
 
 
     def drawState(self):
@@ -57,7 +58,6 @@ class Minesweeper(object):
                 self.C.create_rectangle(col*self.SIZEOFSQ,row*self.SIZEOFSQ, col*self.SIZEOFSQ + self.SIZEOFSQ ,row*self.SIZEOFSQ + self.SIZEOFSQ, fill=c, width=0)
 
         #Draw state
-        print(self.state)
         for row in range(self.ROWS):
             for col in range(self.COLS):
                 cell = self.state[row][col]
@@ -223,7 +223,7 @@ class Minesweeper(object):
         if self.grid[row][col] == "B":
             self.lost += 1
             self.initGame()
-            return({"s" : self.state, "r" : -10})
+            return({"state" : self.state, "reward" : -10})
 
         #Take action and reveal new state
         self.reveal(col, row , np.zeros_like(self.grid))
@@ -235,13 +235,13 @@ class Minesweeper(object):
         if np.sum(self.state == "U") == self.MINES:
             self.won += 1
             self.initGame()
-            return({"s" : self.state, "r" : 10})
+            return({"state" : self.state, "reward" : 10})
 
         #Get the reward for the given action
         reward = self.compute_reward()
 
         #return the state and the reward
-        return({"s" : self.state, "r" : reward})
+        return({"state" : self.state, "reward" : reward})
 
     def compute_reward(self):
         """Computes the reward for a given action"""
@@ -293,32 +293,52 @@ class Minesweeper(object):
         return self.state
 
 
+def stateConverter(state):
+    rows, cols = state.shape
+    res = np.zeros((rows,cols,10))
+    for row in range(rows):
+        for col in range(cols):
+            field = state[row][col]
+            if type(field) == int:
+                res[row][col][field-1] = 1
+            elif field == 'U':
+                res[row][col][8] = 1
+            else:
+                res[row][col][9] = 1
+
+    assert(np.sum(res) == 100)
+    #import IPython
+    #IPython.embed()
+
 
 
 if __name__ == "__main__":
 
-    game = Minesweeper(display=True)
+    game = Minesweeper(display=False)
     game.printState()
 
     i = 0
-    #start = time.time()
+    start = time.time()
     while True:
-
+        
+        """
         inp = input("Enter input (ROW,COL)")
         row = int(inp[1])
         col = int(inp[3])
         v = game.action(row, col)
         game.printState()
         print("\nReward = {}".format(v["r"]))
-
-        """#Test how fast it can run:
+        """
+        #Test how fast it can run:
         i += 1
         print(i)
         act = [np.random.randint(0,10), np.random.randint(0,10)]
-        game.action(act[0],act[1])
-        if i >= 10000:
+        env = game.action(act[0],act[1])
+        state = stateConverter(env['state'])
+        reward = env['reward']
+        if i >= 1000:
             break
-        """
+        
 
-    #print("Took: " + str(time.time()-start))
+    print("Took: " + str(time.time()-start))
 
