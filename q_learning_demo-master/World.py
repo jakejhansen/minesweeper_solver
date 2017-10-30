@@ -1,4 +1,4 @@
-from Tkinter import *
+from tkinter import *
 import random
 master = Tk()
 __author__ = 'philippe'
@@ -31,10 +31,6 @@ illegal_init.extend([(b[0], b[1]) for b in blocks])
 possible_init = possible_init.difference(set(illegal_init))
 player = random.sample(possible_init, 1)[0]
 
-print "Possible starting positions:"
-print "(x, y)"
-for c in possible_init:
-    print c
 
 
 def create_triangle(i, j, action):
@@ -108,9 +104,9 @@ def try_move(dx, dy):
             score -= walk_reward
             score += w
             if score > 0:
-                print "Success! score: ", score
+                print("Success! score: ", score)
             else:
-                print "Fail! score: ", score
+                print("Fail! score: ", score)
             restart = True
             return
     #print "score: ", score
@@ -135,7 +131,7 @@ def call_right(event):
 def restart_game():
     global player, score, me, restart
     player = init_player()
-    print "Start position: " + str(player)
+    print("Start position: " + str(player))
     score = 1
     restart = False
     board.coords(me, player[0]*Width+Width*2/10, player[1]*Width+Width*2/10, player[0]*Width+Width*8/10, player[1]*Width+Width*8/10)

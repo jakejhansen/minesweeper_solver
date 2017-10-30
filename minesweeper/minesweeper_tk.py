@@ -294,6 +294,10 @@ class Minesweeper(object):
 
 
 def stateConverter(state):
+    """ Converts 2d state to one-hot encoded 3d state
+        input: state (rows x cols)
+        output state3d (row x cols x 10)
+    """
     rows, cols = state.shape
     res = np.zeros((rows,cols,10))
     for row in range(rows):
@@ -314,20 +318,20 @@ def stateConverter(state):
 
 if __name__ == "__main__":
 
-    game = Minesweeper(display=False)
+    game = Minesweeper(display=True)
     game.printState()
 
     i = 0
-    start = time.time()
+    #start = time.time()
     while True:
         
-        """
+        
         inp = input("Enter input (ROW,COL)")
         row = int(inp[1])
         col = int(inp[3])
         v = game.action(row, col)
         game.printState()
-        print("\nReward = {}".format(v["r"]))
+        print("\nReward = {}".format(v["reward"]))
         """
         #Test how fast it can run:
         i += 1
@@ -338,7 +342,7 @@ if __name__ == "__main__":
         reward = env['reward']
         if i >= 1000:
             break
-        
+        """
 
-    print("Took: " + str(time.time()-start))
+    #print("Took: " + str(time.time()-start))
 
