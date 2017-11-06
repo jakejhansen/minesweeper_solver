@@ -40,7 +40,9 @@ class Minesweeper(object):
 
 
         self.initGame()
-        self.drawState()
+
+        if display:
+            self.drawState()
 
 
     def drawState(self):
@@ -57,7 +59,6 @@ class Minesweeper(object):
                 self.C.create_rectangle(col*self.SIZEOFSQ,row*self.SIZEOFSQ, col*self.SIZEOFSQ + self.SIZEOFSQ ,row*self.SIZEOFSQ + self.SIZEOFSQ, fill=c, width=0)
 
         #Draw state
-        print(self.state)
         for row in range(self.ROWS):
             for col in range(self.COLS):
                 cell = self.state[row][col]
@@ -223,7 +224,7 @@ class Minesweeper(object):
         if self.grid[row][col] == "B":
             self.lost += 1
             self.initGame()
-            return({"s" : self.state, "r" : -10})
+            return({"s" : np.copy(self.state), "r" : -10})
 
         #Take action and reveal new state
         self.reveal(col, row , np.zeros_like(self.grid))
@@ -235,13 +236,13 @@ class Minesweeper(object):
         if np.sum(self.state == "U") == self.MINES:
             self.won += 1
             self.initGame()
-            return({"s" : self.state, "r" : 10})
+            return({"s" : np.copy(self.state), "r" : 10})
 
         #Get the reward for the given action
         reward = self.compute_reward()
 
         #return the state and the reward
-        return({"s" : self.state, "r" : reward})
+        return({"s" : np.copy(self.state), "r" : reward})
 
     def compute_reward(self):
         """Computes the reward for a given action"""
@@ -290,7 +291,7 @@ class Minesweeper(object):
 
 
     def get_state(self):
-        return self.state
+        return np.copy(self.state)
 
 
 
