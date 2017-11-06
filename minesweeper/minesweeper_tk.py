@@ -103,8 +103,10 @@ class Minesweeper(object):
         self.state_last = np.copy(self.state)
 
 
-        self.action(5,5) #Hack alert, to start off with non empty board. Can be removed but then agent has to learn
-                         #what to do when the board starts out empty. 
+        self.action((5,5)) #Hack alert, to start off with non empty board. Can be removed but then agent has to learn 
+        #what to do when the board starts out empty. 
+
+        return self.state
 
     def initBoard(self, startcol, startrow):
         """ Initializes the board """
@@ -215,38 +217,36 @@ class Minesweeper(object):
 
 
 
-    def action(self, row, col):
+    def action(self, a):
         """ External action, taken by human or agent
             row,col: integer - where the agent want to press
          """
 
         #If press a bomb game over, start new game and return bad reward, -10 in this case
+        row = a[0]
+        col = a[1]
         if self.grid[row][col] == "B":
             self.lost += 1
             self.initGame()
-
-            return({"s" : np.copy(self.state), "r" : -10})
-
-
+            return({"s" : np.copy(self.state), "r" : -10, "d" : True})
 
         #Take action and reveal new state
         self.reveal(col, row , np.zeros_like(self.grid))
         if self.display == True:
             self.drawState()
 
-
         #Winning condition
         if np.sum(self.state == "U") == self.MINES:
             self.won += 1
             self.initGame()
-
-            return({"s" : np.copy(self.state), "r" : 10})
+            return({"s" : np.copy(self.state), "r" : 10, "d" : True})
 
         #Get the reward for the given action
         reward = self.compute_reward()
 
         #return the state and the reward
-        return({"s" : np.copy(self.state), "r" : reward})
+        return({"s" : np.copy(self.state), "r" : reward, "d" : False})
+
 
     def compute_reward(self):
         """Computes the reward for a given action"""
@@ -298,26 +298,26 @@ class Minesweeper(object):
         return np.copy(self.state)
 
 
-def stateConverter(state):
-    """ Converts 2d state to one-hot encoded 3d state
-        input: state (rows x cols)
-        output state3d (row x cols x 10)
-    """
-    rows, cols = state.shape
-    res = np.zeros((rows,cols,10))
-    for row in range(rows):
-        for col in range(cols):
-            field = state[row][col]
-            if type(field) == int:
-                res[row][col][field-1] = 1
-            elif field == 'U':
-                res[row][col][8] = 1
-            else:
-                res[row][col][9] = 1
+    def stateConverter(self, state):
+        """ Converts 2d state to one-hot encoded 3d state
+            input: state (rows x cols)
+            output state3d (row x cols x 10)
+        """
+        rows, cols = state.shape
+        res = np.zeros((rows,cols,10))
+        for row in range(rows):
+            for col in range(cols):
+                field = state[row][col]
+                if type(field) == int:
+                    res[row][col][field-1] = 1
+                elif field == 'U':
+                    res[row][col][8] = 1
+                else:
+                    res[row][col][9] = 1
 
-    assert(np.sum(res) == 100)
-    #import IPython
-    #IPython.embed()
+        assert(np.sum(res) == 100)
+        #import IPython
+        #IPython.embed()
 
 
 
@@ -334,7 +334,7 @@ if __name__ == "__main__":
         inp = input("Enter input (ROW,COL)")
         row = int(inp[1])
         col = int(inp[3])
-        v = game.action(row, col)
+        v = game.action((row, col))
         game.printState()
         print("\nReward = {}".format(v["r"]))
         """
