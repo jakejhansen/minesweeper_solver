@@ -7,7 +7,7 @@ from tkinter import *
 from tkinter import font
 
 class Minesweeper(object):
-    def __init__(self, ROWS = 10, COLS = 10, SIZEOFSQ = 100, MINES = 13, display = False):
+    def __init__(self, ROWS = 10, COLS = 10, SIZEOFSQ = 100, MINES = 13, display = False, rewards = {"win" : 10, "loss" : -10, "progress" : 1, "noprogress" : -1}):
         """ Initialize Minesweeper
             Rows, Cols: int  - Number of rows and cols on the board
             SIZEOFSQ: pixels -  Determines the size of the window, reduce to get smaller window
@@ -19,6 +19,7 @@ class Minesweeper(object):
         self.COLS = COLS
         self.MINES = MINES
         self.display = display
+        self.rewards = rewards
 
         self.grid = np.zeros((self.ROWS, self.COLS), dtype=object)
         self.state = np.zeros((self.ROWS, self.COLS), dtype=object)
@@ -103,7 +104,7 @@ class Minesweeper(object):
         self.state_last = np.copy(self.state)
 
 
-        self.action(5,5) #Hack alert, to start off with non empty board. Can be removed but then agent has to learn
+        self.action((5,5)) #Hack alert, to start off with non empty board. Can be removed but then agent has to learn
                          #what to do when the board starts out empty. 
 
     def initBoard(self, startcol, startrow):
@@ -215,17 +216,18 @@ class Minesweeper(object):
 
 
 
-    def action(self, row, col):
+    def action(self, a):
         """ External action, taken by human or agent
             row,col: integer - where the agent want to press
-         """
+        """
 
+        row, col = a
         #If press a bomb game over, start new game and return bad reward, -10 in this case
         if self.grid[row][col] == "B":
             self.lost += 1
             self.initGame()
 
-            return({"s" : np.copy(self.state), "r" : -10})
+            return({"s" : np.copy(self.state), "r" : self.rewards['loss']})
 
 
 
@@ -240,7 +242,7 @@ class Minesweeper(object):
             self.won += 1
             self.initGame()
 
-            return({"s" : np.copy(self.state), "r" : 10})
+            return({"s" : np.copy(self.state), "r" :  self.rewards['win']})
 
         #Get the reward for the given action
         reward = self.compute_reward()
@@ -253,9 +255,9 @@ class Minesweeper(object):
 
         #Reward = 1 if we get less unknowns, 0 otherwise 
         if (np.sum(self.state_last == 'U') - np.sum(self.state == 'U')) > 0:
-            reward = 1
+            reward =  self.rewards['progress']
         else:
-            reward = 0
+            reward =  self.rewards['noprogress']
 
 
         self.state_last = np.copy(self.state)
@@ -298,26 +300,26 @@ class Minesweeper(object):
         return np.copy(self.state)
 
 
-def stateConverter(state):
-    """ Converts 2d state to one-hot encoded 3d state
-        input: state (rows x cols)
-        output state3d (row x cols x 10)
-    """
-    rows, cols = state.shape
-    res = np.zeros((rows,cols,10))
-    for row in range(rows):
-        for col in range(cols):
-            field = state[row][col]
-            if type(field) == int:
-                res[row][col][field-1] = 1
-            elif field == 'U':
-                res[row][col][8] = 1
-            else:
-                res[row][col][9] = 1
+    def stateConverter(self, state):
+        """ Converts 2d state to one-hot encoded 3d state
+            input: state (rows x cols)
+            output state3d (row x cols x 10)
+        """
+        rows, cols = state.shape
+        res = np.zeros((rows,cols,10))
+        for row in range(rows):
+            for col in range(cols):
+                field = state[row][col]
+                if type(field) == int:
+                    res[row][col][field-1] = 1
+                elif field == 'U':
+                    res[row][col][8] = 1
+                else:
+                    res[row][col][9] = 1
 
-    assert(np.sum(res) == 100)
-    #import IPython
-    #IPython.embed()
+        assert(np.sum(res) == 100)
+        
+        return(res)
 
 
 
@@ -332,9 +334,12 @@ if __name__ == "__main__":
         
         
         inp = input("Enter input (ROW,COL)")
+        if inp == 'bb':
+            import IPython
+            IPython.embed()
         row = int(inp[1])
         col = int(inp[3])
-        v = game.action(row, col)
+        v = game.action((row, col))
         game.printState()
         print("\nReward = {}".format(v["r"]))
         """
