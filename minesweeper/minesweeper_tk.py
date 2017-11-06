@@ -223,32 +223,32 @@ class Minesweeper(object):
 
         row, col = a
         #If press a bomb game over, start new game and return bad reward, -10 in this case
+        row = a[0]
+        col = a[1]
         if self.grid[row][col] == "B":
             self.lost += 1
             self.initGame()
 
-            return({"s" : np.copy(self.state), "r" : self.rewards['loss']})
-
-
+            return({"s" : np.copy(self.state), "r" : self.rewards['loss'], "d" : True})
 
         #Take action and reveal new state
         self.reveal(col, row , np.zeros_like(self.grid))
         if self.display == True:
             self.drawState()
 
-
         #Winning condition
         if np.sum(self.state == "U") == self.MINES:
             self.won += 1
             self.initGame()
 
-            return({"s" : np.copy(self.state), "r" :  self.rewards['win']})
+            return({"s" : np.copy(self.state), "r" :  self.rewards['win'], "d" : True})
 
         #Get the reward for the given action
         reward = self.compute_reward()
 
         #return the state and the reward
-        return({"s" : np.copy(self.state), "r" : reward})
+        return({"s" : np.copy(self.state), "r" : reward, "d" : False})
+
 
     def compute_reward(self):
         """Computes the reward for a given action"""
