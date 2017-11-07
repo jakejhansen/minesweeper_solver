@@ -94,7 +94,7 @@ class Agent(Object):
 				timesteps += t
 
 			# Compute advantages
-            advantages = self.get_advantages(rewards, rollout_limit, discount_factor)
+			advantages = self.get_advantages(rewards, rollout_limit, discount_factor)
 
 			# Policy gradient update
 			self.model.fit(s, a, sample_weight=advantages, epochs=1)

@@ -1,123 +1,186 @@
-import tensorflow as tf
-import tensorflow.contrib.slim as slim
-import numpy as np
+#!/usr/bin/env python
 import math
-import matplotlib.pyplot as plt
-from minesweeper_tk import Minesweeper
+import numpy as np
+import tensorflow as tf
 import IPython
-
-gamma = 0.99
-
-def discount_rewards(r):
-    """ take 1D float array of rewards and compute discounted reward """
-    discounted_r = np.zeros_like(r)
-    running_add = 0
-    for t in reversed(range(0, r.size)):
-        running_add = running_add * gamma + r[t]
-        discounted_r[t] = running_add
-    return discounted_r
+import gym
+from minesweeper_tk import Minesweeper
 
 
-class agent():
-    def __init__(self, lr, s_size,a_size,h_size):
-        #These lines established the feed-forward part of the network. The agent takes a state and produces an action.
-        self.state_in = tf.placeholder(shape=[None,s_size],dtype=tf.float32)
-        hidden = slim.fully_connected(self.state_in,h_size,biases_initializer=None,activation_fn=tf.nn.relu)
-        self.output = slim.fully_connected(hidden,a_size,activation_fn=tf.nn.softmax,biases_initializer=None)
-        self.chosen_action = tf.argmax(self.output,1)
+class PolicyGradientAgent(object):
+	def __init__(self, hparams, sess):
+		# initialization
+		self._s = sess
 
-        #The next six lines establish the training proceedure. We feed the reward and chosen action into the network
-        #to compute the loss, and use it to update the network.
-        self.reward_holder = tf.placeholder(shape=[None],dtype=tf.float32)
-        self.action_holder = tf.placeholder(shape=[None],dtype=tf.int32)
-        
-        self.indexes = tf.range(0, tf.shape(self.output)[0]) * tf.shape(self.output)[1] + self.action_holder
-        self.responsible_outputs = tf.gather(tf.reshape(self.output, [-1]), self.indexes)
+		# build the graph
+		self._input = tf.placeholder(tf.float32,
+			shape=[None, hparams['input_size']])
+		hidden1 = tf.contrib.layers.fully_connected(
+			inputs=self._input,
+			num_outputs=hparams['hidden1_size'],
+			activation_fn=tf.nn.relu,
+			weights_initializer=tf.random_normal_initializer())
+#		hidden2 = tf.contrib.layers.fully_connected(
+#			inputs=hidden1,
+#			num_outputs=hparams['hidden2_size'],
+#			activation_fn=tf.nn.relu,
+#			weights_initializer=tf.random_normal_initializer())
+#		hidden3 = tf.contrib.layers.fully_connected(
+#			inputs=hidden2,
+#			num_outputs=hparams['hidden3_size'],
+#			activation_fn=tf.nn.relu,
+#			weights_initializer=tf.random_normal_initializer())
+		logits = tf.contrib.layers.fully_connected(
+			inputs=hidden1,
+			num_outputs=hparams['num_actions'],
+			activation_fn=None)
 
-        self.loss = -tf.reduce_mean(tf.log(self.responsible_outputs)*self.reward_holder)
-        
-        tvars = tf.trainable_variables()
-        self.gradient_holders = []
-        for idx,var in enumerate(tvars):
-            placeholder = tf.placeholder(tf.float32,name=str(idx)+'_holder')
-            self.gradient_holders.append(placeholder)
-        
-        self.gradients = tf.gradients(self.loss,tvars)
-        
-        optimizer = tf.train.AdamOptimizer(learning_rate=lr)
-        self.update_batch = optimizer.apply_gradients(zip(self.gradient_holders,tvars))
+		# op to sample an action
+		self._sample = tf.reshape(tf.multinomial(logits, 1), [])
+		# get log probabilities
+		log_prob = tf.log(tf.nn.softmax(logits))
+
+		# training part of graph
+		self._acts = tf.placeholder(tf.int32)
+		self._advantages = tf.placeholder(tf.float32)
+
+		# get log probs of actions from episode
+		indices = tf.range(0, tf.shape(log_prob)[0]) * tf.shape(log_prob)[1] + self._acts
+		act_prob = tf.gather(tf.reshape(log_prob, [-1]), indices)
+
+		# surrogate loss
+		loss = -tf.reduce_sum(tf.multiply(act_prob, self._advantages))
+
+		# update
+		optimizer = tf.train.RMSPropOptimizer(hparams['learning_rate'])
+		self._train = optimizer.minimize(loss)
 
 
-tf.reset_default_graph() #Clear the Tensorflow graph.
-
-n = 10
-m = n
-s_size = n*m*10
-a_size = n*m
-mines = math.floor((n*m)/20)
-
-myAgent = agent(lr=1e-2, s_size=s_size, a_size=a_size, h_size=8) #Load the agent.
-env = Minesweeper(ROWS=n, COLS=m, MINES=mines,rewards = {"win" : 100, "loss" : -100, "progress" : 0, "noprogress" : -1})
-
-total_episodes = 5000 #Set total number of episodes to train agent on.
-max_ep = 999
-update_frequency = 5
+	def act(self, observation):
+		# get one action, by sampling
+		return self._s.run(self._sample, feed_dict={self._input: [observation]})
 
 
-# Train
-with tf.Session() as sess:
-    sess.run(tf.global_variables_initializer())
-    i = 0
-    total_reward = []
-    total_lenght = []
-        
-    gradBuffer = sess.run(tf.trainable_variables())
-    for ix,grad in enumerate(gradBuffer):
-        gradBuffer[ix] = grad * 0
+	def train_step(self, obs, acts, advantages):
+		batch_feed = {self._input: obs, self._acts: acts, self._advantages: advantages}
+		self._s.run(self._train, feed_dict=batch_feed)
 
-    while i < total_episodes:
-        env.initGame()
-        s = env.get_state()
-        s = env.stateConverter(s)
-        running_reward = 0
-        ep_history = []
-        for j in range(max_ep):
-            #Probabilistically pick an action given our network outputs.
-            s = np.reshape(s,(1,s_size))
-            #IPython.embed()
-            a_dist = sess.run(myAgent.output,feed_dict={myAgent.state_in: s})
-            a = np.random.choice(a_dist[0],p=a_dist[0])
-            a = np.argmax(a_dist == a)
 
-            out = env.action(np.unravel_index(a, (n,m)))
-            s1,r,d = out["s"],out["r"],out["d"]
-            s1 = env.stateConverter(s1)
-            ep_history.append([s,a,r,s1])
-            s = s1
-            
+def policy_rollout(env, agent):
+	"""Run one episode."""
+	observation, reward, done = env.reset(), 0, False
+	obs, acts, rews = [], [], []
+	while not done:
+		#env.render()
+		obs.append(observation)
+		action = agent.act(observation)
+		observation, reward, done, info = env.step(action)
+		acts.append(action)
+		rews.append(reward)
+		#print("Episode steps: {}".format(len(rews)),end='\r')
+	#print("Episode steps: {}, total reward={}".format(len(rews),np.sum(rews)),end='\r')
+	return obs, acts, rews
 
-            if d:
-                #Update the network.
-                ep_history = np.array(ep_history)
-                ep_history[:,2] = discount_rewards(ep_history[:,2])
-                feed_dict={myAgent.reward_holder:ep_history[:,2],myAgent.action_holder:ep_history[:,1],myAgent.state_in:np.vstack(ep_history[:,0])}
-                #IPython.embed()
-                grads = sess.run(myAgent.gradients, feed_dict=feed_dict)
-                for idx,grad in enumerate(grads):
-                    gradBuffer[idx] += grad
 
-                if i % update_frequency == 0 and i != 0:
-                    feed_dict= dictionary = dict(zip(myAgent.gradient_holders, gradBuffer))
-                    _ = sess.run(myAgent.update_batch, feed_dict=feed_dict)
-                    for ix,grad in enumerate(gradBuffer):
-                        gradBuffer[ix] = grad * 0
-                
-                total_reward.append(running_reward)
-                total_lenght.append(j)
-                break
+def get_advantages(rewards, discount_factor=0.9, eps=1e-12):
+    """Compute advantages"""
+    returns = get_returns(rewards, discount_factor)
+    # standardize columns of returns to get advantages
+    advantages = (returns - np.mean(returns, axis=0)) / (np.std(returns, axis=0) + eps)
+    return advantages
 
-        #Update our running tally of scores.
-        if i % 100 == 0:
-            print(i,np.mean(total_reward[-100:]))
-        i += 1
+
+def get_returns(rewards, discount_factor=0.9):
+    """Compute the cumulative discounted rewards, a.k.a. returns."""
+    returns = np.zeros(len(rewards))
+    for t in reversed(range(len(rewards)-1)):
+        returns[t] = rewards[t] + discount_factor * returns[t+1]
+    return returns
+
+
+def process_rewards(rews):
+	"""Rewards -> Advantages for one episode. """
+
+	# total reward: length of episode
+	#print("Episode steps: {}, total reward={}, total advantage={}".format(len(rews),np.sum(rews),np.sum([len(rews)] * len(rews))),end='\r')
+	#print()
+	return [len(rews)] * len(rews)
+
+
+def main():
+	# Minesweeper environment
+	n = 10
+	m = n
+	s_size = n*m*10
+	a_size = n*m
+	mines = math.floor((n*m)/20)
+	rewsd = {"win" : 100, "loss" : -100, "progress" : 1, "noprogress" : -1}
+	env = Minesweeper(ROWS=n, COLS=m, MINES=mines,rewards = rewsd,display=False)
+
+	# Cartpole environment
+	env = gym.make('CartPole-v0')
+	s_size = env.observation_space.shape[0]
+	a_size = env.action_space.n
+
+	# hyper parameters
+	hparams = {
+			'input_size': s_size,
+			'hidden1_size': 350,
+			'hidden2_size': 250,
+			'hidden3_size': 150,
+			'num_actions': a_size,
+			'learning_rate': 0.01
+	}
+
+	# environment params
+	eparams = {
+			'num_batches': 15,
+			'ep_per_batch': 32
+	}
+
+	saver = tf.train.Saver()
+	with tf.Graph().as_default(), tf.Session() as sess:
+		agent = PolicyGradientAgent(hparams, sess)
+		sess.run(tf.initialize_all_variables())
+		for batch in range(eparams['num_batches']):
+			print('=========\nBATCH {}'.format(batch))
+			b_obs, b_acts, b_rews = [], [], []
+			for epoch in range(eparams['ep_per_batch']):
+				obs, acts, rews = policy_rollout(env, agent)
+				#print('Episode steps: {}'.format(len(rews)),'\r')
+				print('Episode steps: %4d | Mean reward: %6.2f' % (len(rews),np.mean(rews)))
+				b_obs.extend(obs)
+				b_acts.extend(acts)
+				#advantages = get_advantages(rews,discount_factor=1)
+				advantages = process_rewards(rews)
+				b_rews.extend(advantages)
+
+			# update policy
+			# normalize rewards; don't divide by 0
+			b_rews = (b_rews - np.mean(b_rews)) / (np.std(b_rews) + 1e-10)
+			agent.train_step(b_obs, b_acts, b_rews)
+		saver.save(sess, 'tmp/model.ckpt')
+
+	print("Done")
+
+	# Review agent performance
+	if env is gym.wrappers.time_limit.TimeLimit:
+		with tf.Session() as sess:
+			saver.restore(sess, "tmp/model.ckpt")
+			s = env.reset()
+			# view = Viewer(env, custom_render=True)
+			for i in range(500):
+				#view.render()
+				env.render()
+				a = agent.act(s)
+				s, r, done, _ = env.step(a)
+
+			#view.render(close=True, display_gif=True)
+			env.render(close=False)
+	
+
+
+if __name__ == "__main__":
+	main()
+
 

@@ -5,6 +5,8 @@ import time
 import mss
 from tkinter import *
 from tkinter import font
+import IPython
+
 
 class Minesweeper(object):
     def __init__(self, ROWS = 10, COLS = 10, SIZEOFSQ = 100, MINES = 13, display = False, rewards = {"win" : 10, "loss" : -10, "progress" : 1, "noprogress" : -1}):
@@ -221,10 +223,9 @@ class Minesweeper(object):
             row,col: integer - where the agent want to press
         """
 
-        row, col = a
+        
         #If press a bomb game over, start new game and return bad reward, -10 in this case
-        row = a[0]
-        col = a[1]
+        row, col = a[0], a[1]
         if self.grid[row][col] == "B":
             self.lost += 1
             #self.initGame()
@@ -319,6 +320,16 @@ class Minesweeper(object):
         
         return(res)
 
+    # Wrap to openai gym API
+    def step(self, a):
+        a = np.unravel_index(a, (self.ROWS,self.COLS))
+        d = self.action(a)
+        d["s"] = np.reshape(self.stateConverter(d["s"]),(self.ROWS*self.COLS*10))
+        return d["s"], d["r"], d["d"], None
+
+    def reset(self):
+        self.initGame()
+        return np.reshape(self.stateConverter(self.state),(self.ROWS*self.COLS*10))
 
 
 if __name__ == "__main__":
@@ -329,8 +340,6 @@ if __name__ == "__main__":
     i = 0
     #start = time.time()
     while True:
-        
-        
         inp = input("Enter input (ROW,COL)")
         if inp == 'bb':
             import IPython
@@ -340,6 +349,9 @@ if __name__ == "__main__":
         v = game.action((row, col))
         game.printState()
         print("\nReward = {}".format(v["r"]))
+        if v["d"]:
+        	game.reset()
+
         """
         #Test how fast it can run:
         i += 1
