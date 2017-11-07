@@ -15,43 +15,30 @@ class PolicyGradientAgent(object):
 		# build the graph
 		self._input = tf.placeholder(tf.float32,
 			shape=[None, hparams['input_size']])
-		hidden1 = tf.contrib.layers.fully_connected(
-			inputs=self._input,
-			num_outputs=hparams['hidden1_size'],
-			activation_fn=tf.nn.relu,
-			weights_initializer=tf.random_normal_initializer())
-#		hidden2 = tf.contrib.layers.fully_connected(
-#			inputs=hidden1,
-#			num_outputs=hparams['hidden2_size'],
-#			activation_fn=tf.nn.relu,
-#			weights_initializer=tf.random_normal_initializer())
-#		hidden3 = tf.contrib.layers.fully_connected(
-#			inputs=hidden2,
-#			num_outputs=hparams['hidden3_size'],
-#			activation_fn=tf.nn.relu,
-#			weights_initializer=tf.random_normal_initializer())
-		logits = tf.contrib.layers.fully_connected(
-			inputs=hidden1,
-			num_outputs=hparams['num_actions'],
-			activation_fn=None)
 
-		# op to sample an action
+		# Policy network
+		l_hidden1 = tf.layers.dense(inputs=self._input, units=hparams['hidden1_size'], activation=tf.nn.relu, name='l_hidden1')
+		l_hidden2 = tf.layers.dense(inputs=l_hidden1, units=hparams['hidden2_size'], activation=tf.nn.relu, name='l_hidden2')
+		l_hidden3 = tf.layers.dense(inputs=l_hidden2, units=hparams['hidden3_size'], activation=tf.nn.relu, name='l_hidden3')
+		logits = tf.layers.dense(inputs=l_hidden3, units=hparams["num_actions"], activation=None, name='logits')
+
+		# Operation to sample an action
 		self._sample = tf.reshape(tf.multinomial(logits, 1), [])
-		# get log probabilities
+		# Get log probabilities
 		log_prob = tf.log(tf.nn.softmax(logits))
 
-		# training part of graph
+		# Training part of graph
 		self._acts = tf.placeholder(tf.int32)
 		self._advantages = tf.placeholder(tf.float32)
 
-		# get log probs of actions from episode
+		# Get log probs of actions from episode
 		indices = tf.range(0, tf.shape(log_prob)[0]) * tf.shape(log_prob)[1] + self._acts
 		act_prob = tf.gather(tf.reshape(log_prob, [-1]), indices)
 
-		# surrogate loss
+		# Surrogate loss
 		loss = -tf.reduce_sum(tf.multiply(act_prob, self._advantages))
 
-		# update
+		# Optimizer
 		optimizer = tf.train.RMSPropOptimizer(hparams['learning_rate'])
 		self._train = optimizer.minimize(loss)
 
@@ -118,7 +105,14 @@ def main():
 	env = Minesweeper(ROWS=n, COLS=m, MINES=mines,rewards = rewsd,display=False)
 
 	# Cartpole environment
-	env = gym.make('CartPole-v0')
+	max_steps = 500
+	gym.envs.register(
+	    id='CartPole-v2',
+	    entry_point='gym.envs.classic_control:CartPoleEnv',
+	    max_episode_steps=max_steps,
+	    reward_threshold=475.0,
+	)
+	env = gym.make('CartPole-v2')
 	s_size = env.observation_space.shape[0]
 	a_size = env.action_space.n
 
@@ -134,11 +128,10 @@ def main():
 
 	# environment params
 	eparams = {
-			'num_batches': 15,
+			'num_batches': 30,
 			'ep_per_batch': 32
 	}
 
-	saver = tf.train.Saver()
 	with tf.Graph().as_default(), tf.Session() as sess:
 		agent = PolicyGradientAgent(hparams, sess)
 		sess.run(tf.initialize_all_variables())
@@ -146,38 +139,42 @@ def main():
 			print('=========\nBATCH {}'.format(batch))
 			b_obs, b_acts, b_rews = [], [], []
 			for epoch in range(eparams['ep_per_batch']):
+				i = eparams['ep_per_batch']*batch+epoch
 				obs, acts, rews = policy_rollout(env, agent)
 				#print('Episode steps: {}'.format(len(rews)),'\r')
-				print('Episode steps: %4d | Mean reward: %6.2f' % (len(rews),np.mean(rews)))
+				print('Episode %4d | Steps: %4d | Mean reward: %6.2f' % (i,len(rews),np.mean(rews)))
 				b_obs.extend(obs)
 				b_acts.extend(acts)
-				#advantages = get_advantages(rews,discount_factor=1)
 				advantages = process_rewards(rews)
 				b_rews.extend(advantages)
 
-			# update policy
+			# Break if policy is optimal
+			if eparams['ep_per_batch']*max_steps == len(b_obs):
+				break
+
+			# update policys
 			# normalize rewards; don't divide by 0
 			b_rews = (b_rews - np.mean(b_rews)) / (np.std(b_rews) + 1e-10)
 			agent.train_step(b_obs, b_acts, b_rews)
-		saver.save(sess, 'tmp/model.ckpt')
-
-	print("Done")
-
-	# Review agent performance
-	if env is gym.wrappers.time_limit.TimeLimit:
-		with tf.Session() as sess:
-			saver.restore(sess, "tmp/model.ckpt")
+		
+		#IPython.embed()
+		if type(env) is gym.wrappers.time_limit.TimeLimit:
 			s = env.reset()
 			# view = Viewer(env, custom_render=True)
-			for i in range(500):
+			for i in range(max_steps*3):
 				#view.render()
 				env.render()
 				a = agent.act(s)
 				s, r, done, _ = env.step(a)
 
 			#view.render(close=True, display_gif=True)
-			env.render(close=False)
-	
+			env.render(close=True)
+
+		# Save model
+		saver = tf.train.Saver()
+		saver.save(sess, 'tmp/model.ckpt')
+
+	print("Done")
 
 
 if __name__ == "__main__":
