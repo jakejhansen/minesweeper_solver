@@ -227,8 +227,7 @@ class Minesweeper(object):
         col = a[1]
         if self.grid[row][col] == "B":
             self.lost += 1
-            self.initGame()
-
+            #self.initGame()
             return({"s" : np.copy(self.state), "r" : self.rewards['loss'], "d" : True})
 
         #Take action and reveal new state
@@ -239,8 +238,7 @@ class Minesweeper(object):
         #Winning condition
         if np.sum(self.state == "U") == self.MINES:
             self.won += 1
-            self.initGame()
-
+            #self.initGame()
             return({"s" : np.copy(self.state), "r" :  self.rewards['win'], "d" : True})
 
         #Get the reward for the given action
