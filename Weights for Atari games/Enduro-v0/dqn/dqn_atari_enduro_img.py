@@ -103,7 +103,7 @@ policy = LinearAnnealedPolicy(EpsGreedyQPolicy(), attr='eps', value_max=1., valu
 
 dqn = DQNAgent(model=model, nb_actions=nb_actions, policy=policy, memory=memory,
                processor=processor, nb_steps_warmup=50000, gamma=.99, target_model_update=10000,
-               train_interval=4, delta_clip=1., enable_dueling_network=True, dueling_type='avg',)
+               train_interval=4, delta_clip=1.)
 dqn.compile(Adam(lr=.00025), metrics=['mae'])
 
 if args.mode == 'train':
@@ -117,16 +117,13 @@ if args.mode == 'train':
     dqn.fit(env, callbacks=callbacks, nb_steps=5000000, log_interval=10000, visualize = False)
 
 
-# Default nb_steps = 1750000
-
-
     # After training is done, we save the final weights one more time.
     dqn.save_weights(weights_filename, overwrite=True)
 
     # Finally, evaluate our algorithm for 10 episodes.
     dqn.test(env, nb_episodes=10, visualize=True)
 elif args.mode == 'test':
-    weights_filename = 'dqn_{}_weights_250000.h5f'.format(args.env_name)
+    weights_filename = 'dqn_{}_weights.h5f'.format(args.env_name)
     if args.weights:
         weights_filename = args.weights
     dqn.load_weights(weights_filename)
