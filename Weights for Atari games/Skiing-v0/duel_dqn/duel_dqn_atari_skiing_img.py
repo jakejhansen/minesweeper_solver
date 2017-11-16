@@ -126,7 +126,7 @@ if args.mode == 'train':
     # Finally, evaluate our algorithm for 10 episodes.
     dqn.test(env, nb_episodes=10, visualize=True)
 elif args.mode == 'test':
-    weights_filename = 'duel_dqn_{}_weights.h5f'.format(args.env_name)
+    weights_filename = 'duel_dqn_{}_weights_3500000.h5f'.format(args.env_name)
     if args.weights:
         weights_filename = args.weights
     dqn.load_weights(weights_filename)
