@@ -9,6 +9,8 @@ from keras.models import Sequential
 from keras.layers import Dense, Activation, Flatten, Convolution2D, Permute
 from keras.optimizers import Adam
 import keras.backend as K
+if K.backend() == 'tensorflow': # fix for macOS
+    K.set_image_dim_ordering('tf')
 
 from rl.agents.dqn import DQNAgent
 from rl.policy import LinearAnnealedPolicy, BoltzmannQPolicy, EpsGreedyQPolicy, GreedyQPolicy

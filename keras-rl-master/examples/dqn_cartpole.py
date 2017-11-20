@@ -1,5 +1,6 @@
 import numpy as np
 import gym
+import argparse
 
 from keras.models import Sequential
 from keras.layers import Dense, Activation, Flatten
@@ -12,6 +13,9 @@ from rl.memory import SequentialMemory
 
 ENV_NAME = 'CartPole-v0'
 
+parser = argparse.ArgumentParser()
+parser.add_argument('--mode', choices=['train', 'test'], default='train')
+args = parser.parse_args()
 
 # Get the environment and extract the number of actions.
 env = gym.make(ENV_NAME)
@@ -37,16 +41,23 @@ print(model.summary())
 memory = SequentialMemory(limit=50000, window_length=1)
 policy = BoltzmannQPolicy()
 dqn = DQNAgent(model=model, nb_actions=nb_actions, memory=memory, nb_steps_warmup=10,
-               target_model_update=1e-2, policy=policy)
+            target_model_update=1e-2, policy=policy)
 dqn.compile(Adam(lr=1e-3), metrics=['mae'])
 
-# Okay, now it's time to learn something! We visualize the training here for show, but this
-# slows down training quite a lot. You can always safely abort the training prematurely using
-# Ctrl + C.
-dqn.fit(env, nb_steps=50000, visualize=True, verbose=2)
+if args.mode == 'train':
+    # Okay, now it's time to learn something! We visualize the training here for show, but this
+    # slows down training quite a lot. You can always safely abort the training prematurely using
+    # Ctrl + C.
+    dqn.fit(env, nb_steps=50000, visualize=False, verbose=2)
 
-# After training is done, we save the final weights.
-dqn.save_weights('dqn_{}_weights.h5f'.format(ENV_NAME), overwrite=True)
+    # After training is done, we save the final weights.
+    dqn.save_weights('dqn_{}_weights.h5f'.format(ENV_NAME), overwrite=True)
 
-# Finally, evaluate our algorithm for 5 episodes.
-dqn.test(env, nb_episodes=5, visualize=True)
+    # Finally, evaluate our algorithm for 5 episodes.
+    dqn.test(env, nb_episodes=5, visualize=True)
+
+elif args.mode == 'test':
+    weights_filename = 'dqn_{}_weights.h5f'.format(ENV_NAME)
+    dqn.load_weights(weights_filename)
+    # Finally, evaluate our algorithm for 5 episodes.
+    dqn.test(env, nb_episodes=5, visualize=True)
