@@ -1,4 +1,5 @@
 from __future__ import division
+from keras.layers import Dropout
 import numpy as np
 
 from rl.util import *
@@ -26,7 +27,8 @@ class Policy(object):
 class LinearAnnealedPolicy(Policy):
     def __init__(self, inner_policy, attr, value_max, value_min, value_test, nb_steps):
         if not hasattr(inner_policy, attr):
-            raise ValueError('Policy "{}" does not have attribute "{}".'.format(attr))
+            raise ValueError(
+                'Policy "{}" does not have attribute "{}".'.format(attr))
 
         super(LinearAnnealedPolicy, self).__init__()
 
@@ -80,7 +82,7 @@ class EpsGreedyQPolicy(Policy):
         nb_actions = q_values.shape[0]
 
         if np.random.uniform() < self.eps:
-            action = np.random.random_integers(0, nb_actions-1)
+            action = np.random.random_integers(0, nb_actions - 1)
         else:
             action = np.argmax(q_values)
         return action
@@ -109,7 +111,8 @@ class BoltzmannQPolicy(Policy):
         q_values = q_values.astype('float64')
         nb_actions = q_values.shape[0]
 
-        exp_values = np.exp(np.clip(q_values / self.tau, self.clip[0], self.clip[1]))
+        exp_values = np.exp(np.clip(q_values / self.tau,
+                                    self.clip[0], self.clip[1]))
         probs = exp_values / np.sum(exp_values)
         action = np.random.choice(range(nb_actions), p=probs)
         return action
@@ -119,3 +122,15 @@ class BoltzmannQPolicy(Policy):
         config['tau'] = self.tau
         config['clip'] = self.clip
         return config
+
+
+class BayesianQPolicy(Policy):
+    # Dropout approximation of a bayesian q-network. To use with
+    # LinearAnnealedPolicy to anneal the value of the dropout probability
+    # Reference:
+    # https://medium.com/emergent-future/simple-reinforcement-learning-with-tensorflow-part-7-action-selection-strategies-for-exploration-d3a97b7cceaf
+    def __init__(self, tau=1., clip=(-500., 500.)):
+        super(BayesianQPolicy, self).__init__()
+        # Add dropout layer
+        self.rate = 0.5
+        self.agent.model.add(Dropout(self.rate, noise_shape=None, seed=None))
