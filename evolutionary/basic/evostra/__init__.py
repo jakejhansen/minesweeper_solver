@@ -59,7 +59,7 @@ class EvolutionStrategy(object):
         prediction = model.predict(inp)[0]
         # here our best reward is zero
         reward = -np.sum(np.square(solution - prediction))
-        time.sleep(0.5)
+        time.sleep(0.005)
         return reward
 
     def run(self, iterations, print_step=10):
