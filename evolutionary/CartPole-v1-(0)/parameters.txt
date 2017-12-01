@@ -1,0 +1,10 @@
+parameters
+
+
+learning rate = 0.01
+sigma = 0.1
+20 individuals
+1000 generations
+
+no antithetic sampling 
+fitness transform
