@@ -67,8 +67,8 @@ class Evolver(object):
                 #     self.model.set_weights(weights_try[i])
                 #     rewards.append(fitnessfun(self.model, self.envs[i]))
                     
-                #fitnesses = fitness_rank_transform(np.array(rewards))
-                fitnesses = (rewards - np.mean(rewards))/np.std(rewards)
+                fitnesses = fitness_rank_transform(np.array(rewards))
+                #fitnesses = (rewards - np.mean(rewards))/np.std(rewards)
 
                 for index, w in enumerate(self.weights):
                     A = np.array([p[index] for p in noise])
@@ -84,7 +84,7 @@ class Evolver(object):
                 if print_every and (gen % print_every == 0 or gen == generations - 1):
                     print('Generation {:3d} | Reward {: 4.1f} | Time {:4.2f} seconds'.format(gen, test_reward, t))
                     
-                if False: #plot_every and (gen % plot_every == 0 or gen == generations - 1):
+                if plot_every and (gen % plot_every == 0 or gen == generations - 1):
                     fig = plt.figure()
                     plt.plot(results['generations'], np.mean(results['population_rewards'], 1))
                     plt.plot(results['generations'], results['test_rewards'])
@@ -147,7 +147,7 @@ def fitnessfun_simple(model):
     prediction = model.predict(inp.reshape(1, 1, 5))
     reward = -np.sum(np.square(solution - prediction))
     return reward
-    
+
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--nwrk', type=int, default=-1)
