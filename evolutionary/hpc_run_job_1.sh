@@ -1,11 +1,11 @@
 #!/bin/bash
-#BSUB -J deep-evo
+#BSUB -J deep-evo-1
 #BSUB -q hpc
 #BSUB -W 10:30
 #BSUB -n 8
 #BSUB -R "span[hosts=1]"
 #BSUB -R "rusage[mem=6GB]"
-#BSUB -o deep-evo_%J.log
+#BSUB -o deep-evo-1_%J.log
 
 ##!/bin/sh
 ##PBS -N deep-evo
@@ -48,7 +48,7 @@ source stdpy3/bin/activate
 #
 start_time=`date +%s`
 
-
+export KERAS_BACKEND=theano
 python3 "deep/evo/CartPole-v1-(4)/es-multi-threaded.py" --nwrk 1 > "deep/evo/CartPole-v1-(4)/output_001.txt"
 
 

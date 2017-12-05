@@ -46,36 +46,44 @@ class Evolver(object):
             for gen in range(generations):
                 t_start = time.time()
 
-                noise = []
-                weights_try = []
-                rewards = np.zeros(self.population_size)
-                for i in range(self.population_size):
-                    x = []
-                    for w in self.weights:                 
-                        x.append(np.random.randn(*w.shape))
-                    noise.append(x)
-                    weights_try.append(self._get_weights_try(noise[i]))
+                # noise = []
+                # weights_try = []
+                # rewards = np.zeros(self.population_size)
+                # for i in range(self.population_size):
+                #     x = []
+                #     for w in self.weights:                 
+                #         x.append(np.random.randn(*w.shape))
+                #     noise.append(x)
+                #     weights_try.append(self._get_weights_try(noise[i]))
 
                 # Evaluate fitness
 
                 # TODO figure out how to give permuted weights
                 # TODO passed arguments have their old name (e.g. 'name' in self.model=name) FIX THIS
-                rewards = p.map(self.fitnessfun, zip(self.envs, [self.model]*self.population_size))
-
+                output = p.map(self.fitnessfun, zip(self.envs, [self.model]*self.population_size))
+                noise = [t[0] for t in output]
+                rewards = [t[1] for t in output]
+                
+                
+                # [(noise1, reward1), (n2,r2), ...]
+                # noise = [noise1, noise2, ...]
+                # reward = ...
                 # rewards = []
                 # for i in range(self.population_size):
                 #     self.model.set_weights(weights_try[i])
                 #     rewards.append(fitnessfun(self.model, self.envs[i]))
                     
-                #fitnesses = fitness_rank_transform(np.array(rewards))
-                fitnesses = (rewards - np.mean(rewards))/np.std(rewards)
+                fitnesses = fitness_rank_transform(np.array(rewards))
+                #fitnesses = (rewards - np.mean(rewards))/np.std(rewards)
 
+                #IPython.embed()
                 for index, w in enumerate(self.weights):
-                    A = np.array([p[index] for p in noise])
+                    A = np.array([n[index] for n in noise])
                     self.weights[index] = w + self.learning_rate/(self.population_size*self.sigma) * np.dot(A.T, fitnesses).T
                 self.model.set_weights(self.weights)
 
-                test_reward = self.fitnessfun((self.envs[0], self.model))
+                output = self.fitnessfun((self.envs[0], self.model))
+                test_reward = output[1]
                 results['generations'].append(gen)
                 results['population_rewards'].append(rewards)
                 results['test_rewards'].append(test_reward)
@@ -83,9 +91,10 @@ class Evolver(object):
 
                 if print_every and (gen % print_every == 0 or gen == generations - 1):
                     print('Generation {:3d} | Reward {: 4.1f} | Time {:4.2f} seconds'.format(gen, test_reward, t))
-                    
+                
+                # On cluster, extract plot data using sed like so
+                # sed -e 's/.*Reward \(.*\) | Time.*/\1/' deep/evo/CartPole-v1-\(4\)/output_008.txt > plotres.txt
                 if False: #plot_every and (gen % plot_every == 0 or gen == generations - 1):
-                    fig = plt.figure()
                     plt.plot(results['generations'], np.mean(results['population_rewards'], 1))
                     plt.plot(results['generations'], results['test_rewards'])
                     plt.xlabel('Generation')
@@ -93,16 +102,15 @@ class Evolver(object):
                     plt.legend(['Mean population reward', 'Test reward'])
                     plt.tight_layout()
                     plt.savefig('progress.pdf')
-                    plt.close(fig)
                     
         self.model.save_weights('weights.h5')
         return results
 
     def fitnessfun(self, tup):
         env, model = tup
+        noise = []
         for w in self.weights:
-            noise = np.random.randn(*w.shape)
-            #print(noise)
+            noise.append(np.random.randn(*w.shape))
         weights_try = self._get_weights_try(noise)
         model.set_weights(weights_try)
 
@@ -118,7 +126,7 @@ class Evolver(object):
             # observation, reward, done, info = env.step(action)
             t += 1
             total_reward += reward
-        return total_reward
+        return (noise, total_reward)
 
 
 def testfun(model, env, episodes):
@@ -152,7 +160,7 @@ def fitnessfun_simple(model):
 parser = argparse.ArgumentParser()
 parser.add_argument('--nwrk', type=int, default=-1)
 parser.add_argument('--nags', type=int, default=20)
-parser.add_argument('--ngns', type=int, default=100)
+parser.add_argument('--ngns', type=int, default=1000)
 args = parser.parse_args()
 
 envs = [gym.make('CartPole-v1') for i in range(args.nags)]
@@ -170,7 +178,7 @@ envs_simple = range(args.nags)
 
 if __name__ == '__main__':
     mp.freeze_support()
-    e = Evolver(model=model, envs=envs, learning_rate=0.01, sigma=0.1)
+    e = Evolver(model=model, envs=envs, learning_rate=0.01, sigma=0.1, workers=args.nwrk)
     results = e.evolve(args.ngns, print_every=1, plot_every=10)
     #model.load_weights('CartPole-v1-weights.h5')
     #testfun(model, envs[0], 10)
