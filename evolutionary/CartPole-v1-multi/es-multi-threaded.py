@@ -155,7 +155,7 @@ def fitnessfun_simple(model):
     prediction = model.predict(inp.reshape(1, 1, 5))
     reward = -np.sum(np.square(solution - prediction))
     return reward
-    
+
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--nwrk', type=int, default=-1)
