@@ -4,8 +4,8 @@ parameters
 learning rate = 0.01
 sigma = 0.1
 
-20 individuals
-500 generations
+varying # individuals
+200 generations
 
-no fitness transform
+fitness transform
 no antithetic
