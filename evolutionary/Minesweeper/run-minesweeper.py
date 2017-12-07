@@ -8,22 +8,25 @@ import gym
 import IPython
 import numpy as np
 from keras.layers import Dense
+from keras.models import load_model
 from keras.models import Input, Model, Sequential, clone_model
 from keras.optimizers import Adam
-from keras.regularizers import l2, l1, l1_l2
 
 from context import core
-from core.strategies import ES, VES
+from core.strategies import ES
+from minesweeper_tk import Minesweeper
 
 
 def fitnessfun(env, model):
     total_reward = 0
     done = False
     observation = env.reset()
-    while not done:
-        action = model.predict(observation.reshape((1,)+observation.shape))
+    t = 0
+    while not done and t < rows*cols-mines:
+        action = model.predict(observation.reshape((1, 1)+observation.shape))
         observation, reward, done, info = env.step(np.argmax(action))
         total_reward += reward
+        t += 1
     return total_reward
 
 
@@ -33,80 +36,82 @@ def testfun(model, env, episodes):
         total_reward.append(0)
         observation = env.reset()
         done = False
-        while not done:
-            action = model.predict(observation.reshape((1,)+observation.shape))
+        t = 0
+        while not done and t < rows*cols-mines:
+            action = model.predict(observation.reshape((1, 1)+observation.shape))
             observation, reward, done, info = env.step(np.argmax(action))
-            env.render()
             total_reward[i] += reward
+            t += 1
     return total_reward
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--nwrk', type=int, default=mp.cpu_count())
+parser.add_argument('--nwrk', type=int, default=-1)
 parser.add_argument('--nags', type=int, default=20)
-parser.add_argument('--ngns', type=int, default=1000)
+parser.add_argument('--ngns', type=int, default=100)
 args = parser.parse_args()
 
-env = gym.make('CartPole-v0')
 
-o_shape = env.observation_space.shape
-a_shape = env.action_space.n
+rows = 6
+cols = 6
+mines = 7
 
-n_hidden = [32, 128, 128]
+rewards = {"win": 10, "loss": -1, "progress": 0.9, "noprogress": -0.3, "YOLO": -0.3}
+env = Minesweeper(display=False, ROWS=rows, COLS=cols, MINES=mines, rewards=rewards)
+#envs = [gym.make('CartPole-v1') for i in range(args.nags)]
 
-reg = 1
-
-# model = Sequential()
-# #keras.layers.BatchNormalization(input_shape=o_shape, axis=1)
-# model.add(Dense(input_shape=o_shape, units=32))
-# model.add(Dense(units=128))
-# model.add(Dense(units=128))
-# model.add(Dense(units=a_shape))
-# model.compile(optimizer='adam', loss='mean_squared_error')
-# model.summary()
+n_inputs = 360
+n_hidden = 360
+n_hidden2 = 150
+n_hidden3 = 150
+n_hidden4 = 150
+n_outputs = 6*6
 
 model = Sequential()
-model.add(Dense(input_shape=o_shape,
-                units=n_hidden[0],
-                activation='relu',
-                kernel_initializer='glorot_uniform',
-                bias_initializer='zeros',
-                kernel_regularizer=None,#l2(reg),
-                bias_regularizer=None))#l2(reg)))
-# Hidden
-for n_units in n_hidden[1:]:
-    model.add(Dense(units=n_units,
-                    activation='relu',
-                    kernel_initializer='glorot_uniform',
-                    bias_initializer='zeros',
-                    kernel_regularizer=None,#l2(reg),
-                    bias_regularizer=None))#l2(reg)))
-# Output
-model.add(Dense(units=a_shape,
-                activation='softmax',
-                kernel_initializer='glorot_uniform',
-                bias_initializer='zeros',
-                kernel_regularizer=None,#l2(reg),
-                bias_regularizer=None))#,l2(reg)))
-
+model.add(Dense(input_shape=(1, n_inputs), units=n_hidden, activation='relu'))
+model.add(Dense(units=n_hidden2, activation='relu'))
+model.add(Dense(units=n_hidden3, activation='relu'))
+model.add(Dense(units=n_hidden4, activation='relu'))
+model.add(Dense(units=n_outputs, activation='softmax'))
 model.compile(optimizer='adam', loss='mean_squared_error')
 model.summary()
 
 if __name__ == '__main__':
     #try:
         mp.freeze_support()
-        e = ES(fun=fitnessfun, model=model, env=env, population=args.nags, learning_rate=1, sigma=0.1, workers=args.nwrk)
+        e = ES(fun=fitnessfun, model=model, env=env, population=args.nags, learning_rate=0.1, sigma=0.1, workers=args.nwrk)
         e.load_checkpoint()
         # cProfile.run('e.evolve(args.ngns, print_every=1, plot_every=10)', 'profilingstats')
         e.evolve(args.ngns, print_every=1, plot_every=10)
         # p = pstats.Stats('profilingstats')
         # p.sort_stats('cumulative').print_stats(10)
         # p.sort_stats('time').print_stats(10)
-        model.load_weights('weights.h5')
-        testfun(model, env, 10)
+        model = load_model('model.h5')
+        #env = Minesweeper(display=True, ROWS=rows, COLS=cols, MINES=mines, rewards=rewards)
+        #testfun(model, env, 10)
     #except expression as identifier:
     #    pass
 
-
+"""
+model = Sequential()
+model.add(Dense(input_shape=(1, n_inputs),
+                units=n_hidden[0],
+                activation='relu',
+                kernel_initializer='glorot_uniform',
+                bias_initializer='zeros'))
+# Hidden
+for n_units in n_hidden[1:]:
+    model.add(Dense(units=n_units,
+                    activation='relu',
+                    kernel_initializer='glorot_uniform',
+                    bias_initializer='zeros'))
+# Output
+model.add(Dense(units=n_outputs,
+                activation='softmax',
+                kernel_initializer='glorot_uniform',
+                bias_initializer='zeros'))
+model.compile(optimizer='adam', loss='mean_squared_error')
+model.summary()
+"""
 
 """
 ======= PROFILING WITH 1 WORKER =======
