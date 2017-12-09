@@ -16,7 +16,10 @@ from keras.optimizers import Adam
 from keras.models import load_model
 
 
-# TODO: Add fitness_rank_transform method as a property of Strategy to allow using different transforms
+# TODO: Add fitness_transform method as a property of Strategy to allow using different transforms
+# TODO: Implement antithetic sampling
+# TODO: Implement virtual batch normalization (for each generation run some number of timesteps, compute normalizing statistics for inputs, normalize inputs
+# TODO: Implement weight decay regularization 
 
 
 def fitness_rank_transform(rewards):
@@ -30,6 +33,10 @@ def fitness_rank_transform(rewards):
     u = u/np.sum(u)-1/n
     return u
 
+
+def normalization_transform(rewards):
+    # Normalizes the rewards, i.e. rewards~N(0,1)
+    return (rewards - np.mean(rewards))/np.std(rewards)
 
 class Strategy(object):
     '''
@@ -111,7 +118,7 @@ class ES(Strategy):
     '''
 
     def __init__(self, fun, model, env, population=20, learning_rate=0.001, sigma=0.1, workers=mp.cpu_count()):
-        super(ES, self).__init__(fitnessfun=fun, model=model, env=env, population=population, workers=workers)
+        super(ES, self).__init__(fun=fun, model=model, env=env, population=population, workers=workers)
         self.learning_rate = learning_rate
         self.sigma = sigma
 
@@ -206,7 +213,7 @@ class VES(Strategy):
         self.beta = 2 * np.log(self.sigma)  # parameterized variance
         self.results = {'generations': [], 'population_rewards': [],
                         'test_rewards': [], 'time': [], 'weight_norm': [],
-                        'sigma', []}
+                        'sigma': []}
 
     def evolve(self, generations, print_every=0, plot_every=0, checkpoint_every=25):
         self.print_every = print_every

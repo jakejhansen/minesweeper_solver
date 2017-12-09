@@ -45,9 +45,9 @@ def testfun(model, env, episodes):
     return total_reward
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--nwrk', type=int, default=-1)
-parser.add_argument('--nags', type=int, default=20)
-parser.add_argument('--ngns', type=int, default=100)
+parser.add_argument('--nwrk', type=int, default=mp.cpu_count())
+parser.add_argument('--nags', type=int, default=50)
+parser.add_argument('--ngns', type=int, default=10000)
 args = parser.parse_args()
 
 
@@ -81,7 +81,7 @@ if __name__ == '__main__':
         e = ES(fun=fitnessfun, model=model, env=env, population=args.nags, learning_rate=0.1, sigma=0.1, workers=args.nwrk)
         e.load_checkpoint()
         # cProfile.run('e.evolve(args.ngns, print_every=1, plot_every=10)', 'profilingstats')
-        e.evolve(args.ngns, print_every=1, plot_every=10)
+        e.evolve(args.ngns, print_every=1, plot_every=10, checkpoint_every=30)
         # p = pstats.Stats('profilingstats')
         # p.sort_stats('cumulative').print_stats(10)
         # p.sort_stats('time').print_stats(10)

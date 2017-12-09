@@ -1,10 +1,10 @@
 parameters
 
-learning rate = 0.1
+learning rate = 0.01
 sigma = 0.1
 
 1000 generations
-20 individuals
+50 individuals
 
 fitness transform
 no antithetic sampling 
