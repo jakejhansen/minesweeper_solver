@@ -52,7 +52,7 @@ class Minesweeper(object):
         self.state_last = np.copy(self.state)
 
 
-        self.action((5,5)) #Hack alert, to start off with non empty board. Can be removed but then agent has to learn
+        self.action(5,5) #Hack alert, to start off with non empty board. Can be removed but then agent has to learn
                          #what to do when the board starts out empty. 
 
     def initBoard(self, startcol, startrow):
@@ -170,17 +170,16 @@ class Minesweeper(object):
 
 
 
-    def action((self, a)):
+    def action(self, row, col):
         """ External action, taken by human or agent
             a: tuple - row and column of the tile to act on
          """
 
         #If press a bomb game over, start new game and return bad reward, -10 in this case
-        row, col = a[0], a[1]
         if self.grid[row][col] == "B":
             self.lost += 1
             self.initGame()
-            return({"s" : self.state, "r" : -10})
+            return({"s" : self.state, "r" : -10000})
 
         #Take action and reveal new state
         self.reveal(col, row , np.zeros_like(self.grid))
@@ -207,7 +206,7 @@ class Minesweeper(object):
         if (np.sum(self.state_last == 'U') - np.sum(self.state == 'U')) > 0:
             reward = 1
         else:
-            reward = 0
+            reward = -100
 
 
         self.state_last = np.copy(self.state)

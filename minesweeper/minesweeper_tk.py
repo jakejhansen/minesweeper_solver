@@ -9,7 +9,7 @@ import IPython
 
 
 class Minesweeper(object):
-    def __init__(self, ROWS = 10, COLS = 10, SIZEOFSQ = 100, MINES = 13, display = False, rewards = {"win" : 10, "loss" : -10, "progress" : 1, "noprogress" : -1}):
+    def __init__(self, ROWS = 10, COLS = 10, SIZEOFSQ = 100, MINES = 13, display = False, rewards = {"win" : 10, "loss" : -10, "progress" : 1, "noprogress" : -1, "YOLO" : -0.5}):
         """ Initialize Minesweeper
             Rows, Cols: int  - Number of rows and cols on the board
             SIZEOFSQ: pixels -  Determines the size of the window, reduce to get smaller window
@@ -26,6 +26,9 @@ class Minesweeper(object):
         self.grid = np.zeros((self.ROWS, self.COLS), dtype=object)
         self.state = np.zeros((self.ROWS, self.COLS), dtype=object)
         self.state_last = np.copy(self.state)
+        self.nbMatrix = np.zeros((ROWS, COLS), dtype=object)
+
+        self.computeNeighbors() #Fills out the nbMatrix
 
         self.won = 0
         self.lost = 0
@@ -46,6 +49,7 @@ class Minesweeper(object):
 
         if display:
             self.drawState()
+
 
 
     def drawState(self):
@@ -101,17 +105,18 @@ class Minesweeper(object):
 
 
     def initGame(self):
-        self.grid = self.initBoard(startcol = 5, startrow = 5)
+        self.grid = self.initBoard(startcol = 2, startrow = 2)
         self.state = np.ones((self.ROWS, self.COLS), dtype=object) * 'U'
         self.state_last = np.copy(self.state)
 
 
-        self.action((5,5)) #Hack alert, to start off with non empty board. Can be removed but then agent has to learn
+        self.action((2,2)) #Hack alert, to start off with non empty board. Can be removed but then agent has to learn
                          #what to do when the board starts out empty. 
 
     def initBoard(self, startcol, startrow):
         """ Initializes the board """
 
+        #random.seed(a=np.random.randint(0,3))
         COLS = self.COLS
         ROWS = self.ROWS
         grid = np.zeros((self.ROWS, self.COLS), dtype=object)
@@ -121,7 +126,7 @@ class Minesweeper(object):
         while mines > 0:
             (row, col) = (random.randint(0, ROWS-1), random.randint(0, COLS-1))
             #if (col,row) not in findNeighbors(startcol, startrow, grid) and grid[col][row] != 'B' and (col, row) not in (startcol, startrow):
-            if (row,col) not in self.findNeighbors(startrow, startcol) and (row,col) != (startrow, startcol) and grid[row][col] != 'B':
+            if (row,col) not in self.nbMatrix[startrow, startcol] and (row,col) != (startrow, startcol) and grid[row][col] != 'B':
                 grid[row][col] = 'B'
                 mines = mines - 1
 
@@ -138,6 +143,14 @@ class Minesweeper(object):
 
 
         return grid
+
+    def computeNeighbors(self):
+        """ Computes the neighbor matrix for quick lookups"""
+
+        for row in range(self.ROWS):
+            for col in range(self.COLS):
+                self.nbMatrix[row][col] = self.findNeighbors(row, col)
+
 
 
     def findNeighbors(self, rowin, colin):
@@ -162,7 +175,7 @@ class Minesweeper(object):
         """ Finds amount of mines adjacent to a field.
         """
         mines = 0
-        neighbors = self.findNeighbors(row, col)
+        neighbors = self.nbMatrix[row, col]
         for n in neighbors:
             if grid[n[0],n[1]] == 'B':
                 mines = mines + 1
@@ -207,7 +220,7 @@ class Minesweeper(object):
                 self.state[row][col] = self.grid[row][col]
 
                 if self.grid[row][col] == 'E':
-                    neighbors = self.findNeighbors(row, col)
+                    neighbors = self.nbMatrix[row, col]
                     for n in neighbors:
                         if not checked[n[0],n[1]]: 
                             self.reveal(n[1], n[0], checked)
@@ -243,13 +256,17 @@ class Minesweeper(object):
             return({"s" : np.copy(self.state), "r" :  self.rewards['win'], "d" : True})
 
         #Get the reward for the given action
-        reward = self.compute_reward()
+        reward = self.compute_reward(a)
+
+        #if reward == self.rewards['noprogress']:
+        #    self.lost += 1
+        #    return({"s" : np.copy(self.state), "r" : self.rewards['loss'], "d" : True})
 
         #return the state and the reward
         return({"s" : np.copy(self.state), "r" : reward, "d" : False})
 
 
-    def compute_reward(self):
+    def compute_reward(self, a):
         """Computes the reward for a given action"""
 
         #Reward = 1 if we get less unknowns, 0 otherwise 
@@ -258,6 +275,13 @@ class Minesweeper(object):
         else:
             reward =  self.rewards['noprogress']
 
+        #YOLO -> it it clicks on a random field with unknown neighbors
+        tot = 0
+        for n in self.nbMatrix[a[0],a[1]]:
+            if self.state_last[n[0],n[1]] == 'U':
+                tot += 1
+        if tot == len(self.nbMatrix[a[0],a[1]]):
+            reward = self.rewards['YOLO']
 
         self.state_last = np.copy(self.state)
         return(reward)
@@ -305,24 +329,19 @@ class Minesweeper(object):
             output state3d (row x cols x 10)
         """
         rows, cols = state.shape
-        res = np.zeros((rows,cols,10))
-        for row in range(rows):
-            for col in range(cols):
-                field = state[row][col]
-                if type(field) == int:
-                    res[row][col][field-1] = 1
-                elif field == 'U':
-                    res[row][col][8] = 1
-                else:
-                    res[row][col][9] = 1
-
-        assert(np.sum(res) == 100)
-        
+        res = np.zeros((rows,cols,10), dtype = int)
+        for i in range(0,8):
+            res[:,:,i] = state == i+1 #1-7
+        res[:,:,8] = state == 'U'
+        res[:,:,9] = state == 'E'
+       
         return(res)
+
 
     # Wrap to openai gym API
     def step(self, a):
         a = np.unravel_index(a, (self.ROWS,self.COLS))
+        d2 = self.get_state()
         d = self.action(a)
         d["s"] = np.reshape(self.stateConverter(d["s"]),(self.ROWS*self.COLS*10))
         return d["s"], d["r"], d["d"], None
@@ -333,8 +352,8 @@ class Minesweeper(object):
 
 
 if __name__ == "__main__":
-
-    game = Minesweeper(display=True)
+    import time
+    game = Minesweeper(display=True, ROWS = 6, COLS = 6, MINES = 7)
     game.printState()
 
     i = 0
