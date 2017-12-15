@@ -1,0 +1,1 @@
+rsync -rtvuc evolutionary/ s123249@transfer.gbar.dtu.dk:deep/evo/
