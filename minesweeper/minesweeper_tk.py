@@ -33,6 +33,7 @@ class Minesweeper(object):
 
         self.won = 0
         self.lost = 0
+        self.nb_actions = 0
         if display: #Load pygame stuff
 
             #Scale to resolutions
@@ -237,6 +238,7 @@ class Minesweeper(object):
             row,col: integer - where the agent want to press
         """
 
+        self.nb_actions += 1
         
         #If press a bomb game over, start new game and return bad reward, -10 in this case
         row, col = a[0], a[1]
@@ -341,9 +343,14 @@ class Minesweeper(object):
            
             return(res)
         else:
-            res = np.ones((rows, cols, 2)) * -1
+            #res = np.ones((rows, cols, 2)) * -1
+            #filtr = ~np.logical_or(state == "U", state == "E") #Not U or E
+            #res[filtr,0] = state[filtr] / 10
+            #res[state == "U", 1] = 1
+
+            res = np.zeros((rows, cols, 2))
             filtr = ~np.logical_or(state == "U", state == "E") #Not U or E
-            res[filtr,0] = state[filtr] / 10
+            res[filtr,0] = state[filtr]
             res[state == "U", 1] = 1
             return(res)
 
@@ -362,6 +369,9 @@ class Minesweeper(object):
     def reset(self):
         self.initGame()
         return np.reshape(self.stateConverter(self.state),(self.ROWS*self.COLS*2))
+
+    def get_nbactions(self):
+        return(self.nb_actions)
 
 
 if __name__ == "__main__":
