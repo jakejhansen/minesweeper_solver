@@ -56,11 +56,11 @@ cols = 6
 mines = 7
 
 rewards = {"win": 10, "loss": -1, "progress": 0.9, "noprogress": -0.3, "YOLO": -0.3}
-env = Minesweeper(display=False, ROWS=rows, COLS=cols, MINES=mines, rewards=rewards)
+env = Minesweeper(display=False, FULL=False, ROWS=rows, COLS=cols, MINES=mines, rewards=rewards)
 #envs = [gym.make('CartPole-v1') for i in range(args.nags)]
 
-n_inputs = 360
-n_hidden = 360
+n_inputs = rows*cols*2
+n_hidden = rows*cols*2
 n_hidden2 = 150
 n_hidden3 = 150
 n_hidden4 = 150
@@ -81,7 +81,7 @@ if __name__ == '__main__':
         e = ES(fun=fitnessfun, model=model, env=env, population=args.nags, learning_rate=0.1, sigma=0.1, workers=args.nwrk)
         e.load_checkpoint()
         # cProfile.run('e.evolve(args.ngns, print_every=1, plot_every=10)', 'profilingstats')
-        e.evolve(args.ngns, print_every=1, plot_every=10, checkpoint_every=30)
+        e.evolve(args.ngns, checkpoint_every=20)
         # p = pstats.Stats('profilingstats')
         # p.sort_stats('cumulative').print_stats(10)
         # p.sort_stats('time').print_stats(10)
