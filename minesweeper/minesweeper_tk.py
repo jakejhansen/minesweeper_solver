@@ -341,11 +341,10 @@ class Minesweeper(object):
            
             return(res)
         else:
-            res = np.zeros((rows, cols, 2), dtype = int)
+            res = np.ones((rows, cols, 2)) * -1
             filtr = ~np.logical_or(state == "U", state == "E") #Not U or E
-            res[filtr,0] = state[filtr]
+            res[filtr,0] = state[filtr] / 10
             res[state == "U", 1] = 1
-            
             return(res)
 
     def get_validMoves(self):
