@@ -9,7 +9,7 @@ import IPython
 
 
 class Minesweeper(object):
-    def __init__(self, ROWS = 10, COLS = 10, SIZEOFSQ = 100, MINES = 13, display = False, rewards = {"win" : 10, "loss" : -10, "progress" : 1, "noprogress" : -1, "YOLO" : -0.5}):
+    def __init__(self, ROWS = 10, FULL = True, COLS = 10, SIZEOFSQ = 100, MINES = 13, display = False, rewards = {"win" : 10, "loss" : -10, "progress" : 1, "noprogress" : -1, "YOLO" : -0.5}):
         """ Initialize Minesweeper
             Rows, Cols: int  - Number of rows and cols on the board
             SIZEOFSQ: pixels -  Determines the size of the window, reduce to get smaller window
@@ -19,6 +19,7 @@ class Minesweeper(object):
 
         self.ROWS = ROWS
         self.COLS = COLS
+        self.FULL = FULL
         self.MINES = MINES
         self.display = display
         self.rewards = rewards
@@ -320,22 +321,35 @@ class Minesweeper(object):
 
 
     def get_state(self):
+        #Returns the internal representation of the state
         return np.copy(self.state)
 
 
     def stateConverter(self, state):
         """ Converts 2d state to one-hot encoded 3d state
             input: state (rows x cols)
-            output state3d (row x cols x 10)
+            output: state3d (row x cols x 10) (if full)
+                            (row x cols x 2) (if not full)
         """
         rows, cols = state.shape
-        res = np.zeros((rows,cols,10), dtype = int)
-        for i in range(0,8):
-            res[:,:,i] = state == i+1 #1-7
-        res[:,:,8] = state == 'U'
-        res[:,:,9] = state == 'E'
-       
-        return(res)
+        if self.FULL:
+            res = np.zeros((rows,cols,10), dtype = int)
+            for i in range(0,8):
+                res[:,:,i] = state == i+1 #1-7
+            res[:,:,8] = state == 'U'
+            res[:,:,9] = state == 'E'
+           
+            return(res)
+        else:
+            res = np.zeros((rows, cols, 2), dtype = int)
+            filtr = ~np.logical_or(state == "U", state == "E") #Not U or E
+            res[filtr,0] = state[filtr]
+            res[state == "U", 1] = 1
+            
+            return(res)
+
+    def get_validMoves(self):
+        return(self.state == "U") #All unknowns are valid moves
 
 
     # Wrap to openai gym API
@@ -343,12 +357,12 @@ class Minesweeper(object):
         a = np.unravel_index(a, (self.ROWS,self.COLS))
         d2 = self.get_state()
         d = self.action(a)
-        d["s"] = np.reshape(self.stateConverter(d["s"]),(self.ROWS*self.COLS*10))
+        d["s"] = np.reshape(self.stateConverter(d["s"]),(self.ROWS*self.COLS*2))
         return d["s"], d["r"], d["d"], None
 
     def reset(self):
         self.initGame()
-        return np.reshape(self.stateConverter(self.state),(self.ROWS*self.COLS*10))
+        return np.reshape(self.stateConverter(self.state),(self.ROWS*self.COLS*2))
 
 
 if __name__ == "__main__":
