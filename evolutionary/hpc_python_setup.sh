@@ -19,7 +19,9 @@ if [ -z "$PBS_O_WORKDIR" ]; then
 fi
 
 # load modules
-module load python3
+module load python3/3.6.2
+module load scipy/0.19.1-python-3.6.2
+module load matplotlib/2.0.2-python-3.6.2
 
 # Use HOME directory as base
 cd $HOME
@@ -31,20 +33,15 @@ start_time=`date +%s`
 
 #
 # Setup virtual env
-#
+#	
+rm -rf ~/stdpy3
 python3 -m venv ~/stdpy3 --copies
+source ~/stdpy3/bin/activate
 
 #
 # Install python modules
 #
-pip3 install keras
-pip3 install matplotlib
-pip3 install IPython
-pip3 install joblib
-pip3 install gym
-pip3 install tensorflow
-pip3 install h5py
-
+pip3 install keras IPython joblib gym tensorflow h5py theano mss
 
 # DONE
 end_time=`date +%s`

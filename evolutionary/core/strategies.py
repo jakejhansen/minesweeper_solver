@@ -8,7 +8,7 @@ import time
 import gym
 import IPython
 import matplotlib
-matplotlib.use('Agg')
+matplotlib.use('Agg')  # Allow plotting on servers (e.g. without screen)
 import matplotlib.pyplot as plt
 import numpy as np
 from joblib import Parallel, delayed
@@ -61,16 +61,15 @@ class Strategy(object):
         self.workers = workers
         self.weights = self.model.get_weights()
         self.generations = 0
-        self.results = {'generations': [], 'steps': [], 'population_rewards': [],
+        self.results = {'generations': [], 'steps': [], 'mean_pop_rewards': [],
                         'test_rewards': [], 'time': [], 'weight_norm': []}
         
     def print_progress(self, gen=None):
         if self.print_every and (gen is None or gen % self.print_every == 0):
-            IPython.embed()
             print('Generation {:>6d} | Test reward {: >7.1f} | Mean pop reward {: >7.1f} | Time {:>7.2f} seconds'.format(
-                gen, self.results['test_rewards'][-1], np.mean(self.results['population_rewards'][-1]), self.results['time'][-1]))
+                gen, self.results['test_rewards'][-1], np.mean(self.results['mean_pop_rewards'][-1]), self.results['time'][-1]))
 
-    def make_checkpoint(self, steps, rewards, t_start, gen=None):
+    def make_checkpoint(self, gen, steps, rewards, t_start, p):
         if self.checkpoint_every and (gen is None or gen % self.checkpoint_every == 0):
             # Test current model
             test_reward = 0
@@ -82,10 +81,10 @@ class Strategy(object):
             # Store results
             self.results['generations'].append(gen)
             self.results['steps'].append(steps)
-            self.results['population_rewards'].append(rewards)
             self.results['test_rewards'].append(test_reward)
             self.results['time'].append(time.time()-t_start)
             self.results['weight_norm'].append(self.get_weight_norms(self.weights))
+            self.results['mean_pop_rewards'].append(np.mean(rewards))
             self.print_progress(gen)
 
             # Save model
@@ -112,29 +111,30 @@ class Strategy(object):
     def plot_progress(self, gen=None):
         if self.plot_every and (gen is None or gen % self.plot_every == 0):
             fig = plt.figure()
-            plt.plot(self.results['generations'], np.mean(self.results['population_rewards'], 1))
-            plt.plot(self.results['generations'], self.results['test_rewards'])
-            plt.xlabel('Generation')
+            plt.plot(self.results['steps'], self.results['mean_pop_rewards'])
+            plt.plot(self.results['steps'], self.results['test_rewards'])
+            plt.xlabel('Environment steps')
             plt.ylabel('Reward')
             plt.legend(['Mean population reward', 'Test reward'])
             plt.tight_layout()
             plt.grid()
-            plt.savefig('progress_1.pdf')
+            
+            fig.savefig('progress_1.pdf')
             plt.close(fig)
 
             fig = plt.figure(figsize=(4, 8))
             plt.subplot(3, 1, 1)
-            plt.plot(self.results['generations'], np.mean(self.results['population_rewards'], 1))
+            plt.plot(self.results['steps'], self.results['mean_pop_rewards'])
             plt.ylabel('Mean population reward')
             plt.grid()
             plt.subplot(3, 1, 2)
-            plt.plot(self.results['generations'], self.results['test_rewards'])
+            plt.plot(self.results['steps'], self.results['test_rewards'])
             plt.ylabel('Test reward')
             plt.grid()
             plt.subplot(3, 1, 3)
-            plt.plot(self.results['generations'], self.results['weight_norm'])
+            plt.plot(self.results['steps'], self.results['weight_norm'])
             plt.ylabel('Weight norm')
-            plt.xlabel('Generation')
+            plt.xlabel('Environment steps')
             plt.tight_layout()
             plt.grid()
             plt.savefig('progress_2.pdf')
@@ -159,6 +159,7 @@ class ES(Strategy):
         self.print_every = checkpoint_every
         self.plot_every = plot_every if plot_every > checkpoint_every or plot_every==0 else checkpoint_every
         self.checkpoint_every = checkpoint_every
+        steps = 0
         with mp.Pool(self.workers) as p:
             t_start = time.time()
             for gen in range(self.generations, generations+self.generations):
@@ -168,8 +169,9 @@ class ES(Strategy):
                 output = p.map(self.evaluate_fitness, inputs)
                 rewards = [d['reward'] for d in output]
                 rewards.extend([d['reward_antithetic'] for d in output])
-                steps = [d['steps'] for d in output]
-                steps.extend([d['steps_antithetic'] for d in output])
+                steps_list = [d['steps'] for d in output]
+                steps_list.extend([d['steps_antithetic'] for d in output])
+                steps += np.sum(steps_list)
                 noises = [d['noise'] for d in output]
                 noises.extend([d['noise_antithetic'] for d in output])
                 weight_norms = [d['weight_norms'] for d in output]
@@ -177,17 +179,14 @@ class ES(Strategy):
 
                 # Squash rewards and weight norms into [0,1]
                 weight_norms_unif = uniform_transform(weight_norms)
-                rewards_unif = uniform_transform(rewards)
+                rewards_unif = uniform_transform(np.array(rewards))
                 reg_costs = self.reg['L2'] * weight_norms_unif
 
+                # Compute regularized reward
+                rewards_reg = rewards_unif - reg_costs
+
                 # Transform rewards to fitness scores and regularize
-                #rewards_norm = (rewards - np.mean(rewards))/np.std(rewards)
-                #print(np.array(np.array(rewards)))
-                #print(np.array(rewards_norm))
-                #print(np.array(reg_costs))
-                rewards_reg = np.array([rew - reg for rew, reg in zip(rewards_unif, reg_costs)])
                 fitnesses = fitness_rank_transform(np.array(rewards_reg))
-                #print(fitnesses)
 
                 # Update policy network
                 for index, w in enumerate(self.weights):
@@ -197,10 +196,11 @@ class ES(Strategy):
                 
                 # On cluster, extract plot data using sed like so
                 # sed -e 's/.*Reward \(.*\) | Time.*/\1/' deep/evo/CartPole-v1-\(4\)/output_008.txt > plotres.txt
-                self.make_checkpoint(steps, rewards, t_start, gen)
+                self.make_checkpoint(gen, steps, rewards, t_start, p)
                 self.plot_progress(gen)
 
-        self.make_checkpoint(steps, rewards, t_start)
+        self.make_checkpoint(gen, steps, rewards, t_start, p)
+        self.plot_progress(gen)
         self.generations += generations
         return self.results
 
@@ -269,87 +269,22 @@ class VES(Strategy):
         self.lr_sigma
         self.sigma = sigma
         self.beta = 2 * np.log(self.sigma)  # parameterized variance
-        self.results = {'generations': [], 'population_rewards': [],
+        self.results = {'generations': [], 'mean_pop_rewards': [],
                         'test_rewards': [], 'time': [], 'weight_norm': [],
                         'sigma': []}
 
     def evolve(self, generations, print_every=0, plot_every=0, checkpoint_every=25):
-        self.print_every = print_every
-        self.plot_every = plot_every
-        self.checkpoint_every = checkpoint_every
-        # IPython.embed()
-        with mp.Pool(self.workers) as p:
-            for gen in range(self.generations, generations+self.generations):
-                t_start = time.time()
-
-                # Evaluate fitness of permuted policies
-                inputs = [{'env': env, 'model': model} for env, model in
-                          zip([self.env]*self.population, [self.model]*self.population)]
-                output = p.map(self.evaluate_fitness, inputs)
-                rewards = [d['reward'] for d in output]
-                noise = [d['noise'] for d in output]
-                               
-                # Transform rewards to fitness scores
-                fitnesses = fitness_rank_transform(np.array(rewards))
-                #fitnesses = (rewards - np.mean(rewards))/np.std(rewards)
-
-                # Weight norm
-                weight_list = []
-                for l in self.weights:
-                    for w in l.flatten():
-                        weight_list.append(w)
-                weight_norm = np.linalg.norm(weight_list)
-
-                # Update policy network
-                for index, w in enumerate(self.weights):
-                    A = np.array([n[index] for n in noise])
-                    self.weights[index] = w + self.lr_mu/(self.population * self.sigma**2) * np.dot(A.T, fitnesses).T
-                self.model.set_weights(self.weights)
-
-                # Test current model
-                test_reward = self.fitnessfun(self.env, self.model)
-                
-                self.sigma = np.exp(self.beta)**0.5
-
-                # Save results
-                t = time.time()-t_start
-                self.results['generations'].append(gen)
-                self.results['population_rewards'].append(rewards)
-                self.results['test_rewards'].append(test_reward)
-                self.results['time'].append(t)
-                self.results['weight_norm'].append(weight_norm)
-                self.results['sigma'].append(self.sigma)
-                
-                # On cluster, extract plot data using sed like so
-                # sed -e 's/.*Reward \(.*\) | Time.*/\1/' deep/evo/CartPole-v1-\(4\)/output_008.txt > plotres.txt
-                self.print_progress(gen)
-                self.make_checkpoint(gen)
-                self.plot_progress(gen)
-
-        self.make_checkpoint()
-        self.generations += generations
-        return self.results
+        pass
 
     def evaluate_fitness(self, d):
-        env, model = d['env'], d['model']
-        noise = self.get_noise()
-        weights = self.permute_weights(noise)
-        model.set_weights(weights)
-        reward = self.fitnessfun(env, model)
-        return {'reward': reward, 'noise': noise}
+        pass
 
     def permute_weights(self, p):
-        weights = []
-        for index, i in enumerate(p):
-            jittered = self.sigma*i
-            weights.append(self.weights[index] + jittered)
-        return weights
+        pass
 
     def get_noise(self):
-        noise = []
-        for w in self.weights:
-            noise.append(np.random.randn(*w.shape))
-        return noise
+        pass
+
 
 class CMAES(Strategy):
     """
