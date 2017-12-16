@@ -17,6 +17,7 @@ from keras.optimizers import Adam
 from keras.models import load_model, save_model
 
 
+# TODO: Put method parameters into dictionary
 # TODO: Add fitness_transform method as a property of Strategy to allow using different transforms
 # TODO: Add regularizers as functions  e.g. from keras.regularizers (l1, l2, l1_l2)
 # TODO: Implement virtual batch normalization (for each generation run some number of timesteps, 
@@ -60,14 +61,28 @@ class Strategy(object):
         self.workers = workers
         self.weights = self.model.get_weights()
         self.generations = 0
+        self.save_dir = save_dir if save_dir is not None else os.getcwd()
         self.results = {'generations': [], 'steps': [], 'mean_pop_rewards': [],
                         'test_rewards': [], 'time': [], 'weight_norm': []}
-        self.save_dir = save_dir if save_dir is not None else os.getcwd()
-        
+        self.parameters = {'population': self.population, 'workers': self.workers,
+                           'save_dir': self.save_dir}
+
     def print_progress(self, gen=None):
         if self.print_every and (gen is None or gen % self.print_every == 0):
-            print('Generation {:>6d} | Test reward {: >7.1f} | Mean pop reward {: >7.1f} | Time {:>7.2f} seconds'.format(
-                gen, self.results['test_rewards'][-1], np.mean(self.results['mean_pop_rewards'][-1]), self.results['time'][-1]))
+            string = 'Generation {:>6d} | Steps {:>10d} | Test reward {: >7.1f} | Mean pop reward {: >7.1f} | Time {:>7.2f} seconds'.format(
+                gen, self.results['steps'][-1], self.results['test_rewards'][-1], np.mean(self.results['mean_pop_rewards'][-1]), self.results['time'][-1])
+            print(string)
+            with open(os.path.join(self.save_dir, 'out.log'), 'a') as f:
+                f.write(string + '\n')
+
+    def print_setting(self):
+        max_key_len = max([len(k) for k in self.parameters.keys()])
+        max_val_len = max([len(str((v))) for v in self.parameters.values()])
+        string = ''
+        for k, v in self.parameters.items():
+            string += '{:<{wk}} : {:{wv}}\n'.format(k, str(v), wk=max_key_len, wv=max_val_len)
+        with open(os.path.join(self.save_dir, 'out.log'), 'a') as f:    
+            f.write(string+'\n')
 
     def make_checkpoint(self, gen, steps, rewards, t_start, p):
         if self.checkpoint_every and (gen is None or gen % self.checkpoint_every == 0):
@@ -151,6 +166,10 @@ class ES(Strategy):
         self.learning_rate = learning_rate
         self.sigma = sigma
         self.reg = reg
+        self.parameters['learning_rate'] = self.learning_rate
+        self.parameters['sigma'] = self.sigma
+        self.parameters['reg'] = self.reg
+        self.print_setting()
 
     def evolve(self, generations, checkpoint_every=25, plot_every=0):
         self.print_every = checkpoint_every
