@@ -85,7 +85,7 @@ model.add(Dense(units=n_hidden2, activation='relu'))
 model.add(Dense(units=n_hidden3, activation='relu'))
 model.add(Dense(units=n_hidden4, activation='relu'))
 model.add(Dense(units=n_outputs, activation='softmax'))
-model.compile(optimizer='rmsprop', loss='mean_squared_error')
+model.compile(optimizer='adam', loss='mean_squared_error')
 model.summary()
 
 DO_PROFILE = False
