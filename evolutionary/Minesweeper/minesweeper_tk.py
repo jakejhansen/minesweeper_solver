@@ -9,7 +9,7 @@ import IPython
 
 
 class Minesweeper(object):
-    def __init__(self, ROWS = 10, FULL = True, COLS = 10, SIZEOFSQ = 100, MINES = 13, display = False, rewards = {"win" : 10, "loss" : -10, "progress" : 1, "noprogress" : -1, "YOLO" : -0.5}):
+    def __init__(self, ROWS = 10, OUT = "FULL", COLS = 10, SIZEOFSQ = 100, MINES = 13, interval = 0, display = False, rewards = {"win" : 10, "loss" : -10, "progress" : 1, "noprogress" : -1, "YOLO" : -0.5}):
         """ Initialize Minesweeper
             Rows, Cols: int  - Number of rows and cols on the board
             SIZEOFSQ: pixels -  Determines the size of the window, reduce to get smaller window
@@ -19,10 +19,11 @@ class Minesweeper(object):
 
         self.ROWS = ROWS
         self.COLS = COLS
-        self.FULL = FULL
+        self.OUT = OUT
         self.MINES = MINES
         self.display = display
         self.rewards = rewards
+        self.interval = interval
 
         self.grid = np.zeros((self.ROWS, self.COLS), dtype=object)
         self.state = np.zeros((self.ROWS, self.COLS), dtype=object)
@@ -122,7 +123,7 @@ class Minesweeper(object):
         COLS = self.COLS
         ROWS = self.ROWS
         grid = np.zeros((self.ROWS, self.COLS), dtype=object)
-        mines = self.MINES
+        mines = self.MINES + random.randint(-self.interval, self.interval)
 
         #Randomly place bombs
         while mines > 0:
@@ -331,10 +332,12 @@ class Minesweeper(object):
         """ Converts 2d state to one-hot encoded 3d state
             input: state (rows x cols)
             output: state3d (row x cols x 10) (if full)
-                            (row x cols x 2) (if not full)
+                            (row x cols x 2) (if condensed)
+                            (row x cols x 1) (if image)
+
         """
         rows, cols = state.shape
-        if self.FULL:
+        if self.OUT == "FULL":
             res = np.zeros((rows,cols,10), dtype = int)
             for i in range(0,8):
                 res[:,:,i] = state == i+1 #1-7
@@ -342,17 +345,26 @@ class Minesweeper(object):
             res[:,:,9] = state == 'E'
            
             return(res)
-        else:
-            #res = np.ones((rows, cols, 2)) * -1
-            #filtr = ~np.logical_or(state == "U", state == "E") #Not U or E
-            #res[filtr,0] = state[filtr] / 10
-            #res[state == "U", 1] = 1
+        elif self.OUT == "CONDENSED":
+            #Outputs a condensed representation of nxmx2
+            #First layer is the value of the intergers
+            #Second layer is true if field is empty, 0 otherwise
 
             res = np.zeros((rows, cols, 2))
             filtr = ~np.logical_or(state == "U", state == "E") #Not U or E
-            res[filtr,0] = state[filtr]
+            res[filtr,0] = state[filtr] / 4
             res[state == "U", 1] = 1
             return(res)
+
+        elif self.OUT == "IMAGE":
+            #Outputs an image
+            res = np.zeros((rows, cols,1))
+            res[state == "U", 0] = -1
+            res[state == "E", 0] = 0
+            filtr = ~np.logical_or(state == "U", state == "E") #Not U or E
+            res[filtr, 0] = state[filtr] / 8
+            return(res)
+
 
     def get_validMoves(self):
         return(self.state == "U") #All unknowns are valid moves

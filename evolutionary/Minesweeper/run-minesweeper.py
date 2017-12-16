@@ -30,7 +30,6 @@ def fitnessfun(env, model):
 
 
 def testfun(model, env, episodes):
-    # IPython.embed()
     total_reward = []
     try:
         for i in range(episodes):
@@ -67,12 +66,12 @@ args = parser.parse_args()
 rows = args.size
 cols = args.size
 mines = args.mine
-FULL = True
+OUT = 'FULL'
 
 rewards = {"win": 0.9, "loss": -1, "progress": 0.9, "noprogress": -0.3, "YOLO": -0.3}
-env = Minesweeper(display=False, FULL=FULL, ROWS=rows, COLS=cols, MINES=mines, rewards=rewards)
+env = Minesweeper(display=False, OUT=OUT, ROWS=rows, COLS=cols, MINES=mines, rewards=rewards)
 
-n_inputs = rows*cols*10 if FULL else rows*cols*2
+n_inputs = rows*cols*10 if OUT is 'FULL' else rows*cols*2
 n_hidden = [rows*cols*10, 200, 200, 200, 200]
 n_outputs = rows*cols
 
@@ -108,22 +107,22 @@ DO_PROFILE = False
 save_dir = os.path.split(os.path.realpath(__file__))[0]
 if __name__ == '__main__':
     mp.freeze_support()
-    e = ES(fun=fitnessfun, model=model, env=env, reg={'L2': args.regu}, population=args.nags, learning_rate=args.lrte, sigma=args.sigm, workers=args.nwrk, save_dir=save_dir)
-    e.load_checkpoint()
+    #e = ES(fun=fitnessfun, model=model, env=env, reg={'L2': args.regu}, population=args.nags, learning_rate=args.lrte, sigma=args.sigm, workers=args.nwrk, save_dir=save_dir)
+    #e.load_checkpoint()
     
     if DO_PROFILE:
         cProfile.run('e.evolve(args.ngns, print_every=1, plot_every=10)', 'profilingstats')
     
-    e.evolve(args.ngns, checkpoint_every=args.cint, plot_every=args.cint)
+    # e.evolve(args.ngns, checkpoint_every=args.cint, plot_every=args.cint)
     
     if DO_PROFILE:
         p = pstats.Stats('profilingstats')
         p.sort_stats('cumulative').print_stats(10)
         p.sort_stats('time').print_stats(10)
     
-    # model = load_model('model.h5')
-    # env = Minesweeper(display=True, FULL=FULL, ROWS=rows, COLS=cols, MINES=mines, rewards=rewards)
-    # testfun(model, env, 10)
+    model = load_model('model.h5')
+    env = Minesweeper(display=True, OUT=OUT, ROWS=rows, COLS=cols, MINES=mines, rewards=rewards)
+    testfun(model, env, 10)
 
 """
 model = Sequential()

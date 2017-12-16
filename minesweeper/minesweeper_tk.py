@@ -375,12 +375,12 @@ class Minesweeper(object):
         a = np.unravel_index(a, (self.ROWS,self.COLS))
         d2 = self.get_state()
         d = self.action(a)
-        d["s"] = np.reshape(self.stateConverter(d["s"]),(self.ROWS*self.COLS*2))
+        d["s"] = self.stateConverter(d["s"]).flatten()
         return d["s"], d["r"], d["d"], None
 
     def reset(self):
         self.initGame()
-        return np.reshape(self.stateConverter(self.state),(self.ROWS*self.COLS*2))
+        return self.stateConverter(self.state).flatten()
 
     def get_nbactions(self):
         return(self.nb_actions)
