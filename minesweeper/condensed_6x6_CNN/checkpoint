@@ -1,0 +1,2 @@
+model_checkpoint_path: "condensed_6x6_CNN.ckpt"
+all_model_checkpoint_paths: "condensed_6x6_CNN.ckpt"
