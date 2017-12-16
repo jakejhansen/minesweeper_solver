@@ -11,7 +11,6 @@ import matplotlib
 matplotlib.use('Agg')  # Allow plotting on servers (e.g. without screen)
 import matplotlib.pyplot as plt
 import numpy as np
-from joblib import Parallel, delayed
 from keras.layers import Dense
 from keras.models import Input, Model, Sequential, clone_model
 from keras.optimizers import Adam
@@ -53,7 +52,7 @@ class Strategy(object):
     '''
     Abstract evolutionary strategy that defines the general behaviour of the class.
     '''
-    def __init__(self, fun, model, env, population, workers):
+    def __init__(self, fun, model, env, population, workers, save_dir=None):
         self.fitnessfun = fun
         self.model = model
         self.env = env
@@ -63,6 +62,7 @@ class Strategy(object):
         self.generations = 0
         self.results = {'generations': [], 'steps': [], 'mean_pop_rewards': [],
                         'test_rewards': [], 'time': [], 'weight_norm': []}
+        self.save_dir = save_dir if save_dir is not None else os.getcwd()
         
     def print_progress(self, gen=None):
         if self.print_every and (gen is None or gen % self.print_every == 0):
@@ -88,21 +88,19 @@ class Strategy(object):
             self.print_progress(gen)
 
             # Save model
-            #self.model.save('model.h5')
-            save_model(self.model, 'model.h5')
-            #self.model.save_weights('weights.h5', overwrite=True)
-            with open('model.json', 'w') as f:
+            save_model(self.model, os.path.join(self.save_dir, 'model.h5'))
+            with open(os.path.join(self.save_dir, 'model.json'), 'w') as f:
                 f.write(self.model.to_json())
             # Save results
-            with open('results.pkl', 'wb') as f:
+            with open(os.path.join(self.save_dir, 'results.pkl'), 'wb') as f:
                 pickle.dump(self.results, f, protocol=pickle.HIGHEST_PROTOCOL)
 
     def load_checkpoint(self):
         try:
-            with open('results.pkl', 'rb') as f:
+            with open(os.path.join(self.save_dir, 'results.pkl'), 'rb') as f:
                 self.results = pickle.load(f)
             self.generations = max(self.results['generations'])
-            self.model = load_model('model.h5')
+            self.model = load_model(os.path.join(self.save_dir, 'model.h5'))
             print('Loaded checkpoint. Resuming trainig from generation {:d}'.format(self.generations))
         except:
             print("Failed to load checkpoint")
@@ -118,8 +116,7 @@ class Strategy(object):
             plt.legend(['Mean population reward', 'Test reward'])
             plt.tight_layout()
             plt.grid()
-            
-            fig.savefig('progress_1.pdf')
+            plt.savefig(os.path.join(self.save_dir, 'progress1.pdf'))
             plt.close(fig)
 
             fig = plt.figure(figsize=(4, 8))
@@ -137,7 +134,7 @@ class Strategy(object):
             plt.xlabel('Environment steps')
             plt.tight_layout()
             plt.grid()
-            plt.savefig('progress_2.pdf')
+            plt.savefig(os.path.join(self.save_dir, 'progress2.pdf'))
             plt.close(fig)
 
 
@@ -149,8 +146,8 @@ class ES(Strategy):
     Reference: Evolutionary Strategies as a Scalable Alternative to Reinforcement Learning <https://arxiv.org/abs/1703.03864>
     '''
 
-    def __init__(self, fun, model, env, reg={'L2': 0.001}, population=20, learning_rate=0.001, sigma=0.1, workers=mp.cpu_count()):
-        super(ES, self).__init__(fun=fun, model=model, env=env, population=population, workers=workers)
+    def __init__(self, fun, model, env, reg={'L2': 0.001}, population=20, learning_rate=0.001, sigma=0.1, workers=mp.cpu_count(), save_dir=None):
+        super(ES, self).__init__(fun=fun, model=model, env=env, population=population, workers=workers, save_dir=save_dir)
         self.learning_rate = learning_rate
         self.sigma = sigma
         self.reg = reg
@@ -194,11 +191,11 @@ class ES(Strategy):
                     self.weights[index] = w + self.learning_rate/(self.population * self.sigma**2) * np.dot(A.T, fitnesses).T
                 self.model.set_weights(self.weights)
                 
-                # On cluster, extract plot data using sed like so
-                # sed -e 's/.*Reward \(.*\) | Time.*/\1/' deep/evo/CartPole-v1-\(4\)/output_008.txt > plotres.txt
+                # Save
                 self.make_checkpoint(gen, steps, rewards, t_start, p)
                 self.plot_progress(gen)
 
+        # Save
         self.make_checkpoint(gen, steps, rewards, t_start, p)
         self.plot_progress(gen)
         self.generations += generations

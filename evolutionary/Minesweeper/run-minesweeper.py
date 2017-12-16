@@ -1,9 +1,9 @@
 import argparse
 import cProfile
 import multiprocessing as mp
+import os
 import pstats
 import time
-
 import gym
 import IPython
 import numpy as np
@@ -69,29 +69,46 @@ cols = args.size
 mines = args.mine
 FULL = True
 
-rewards = {"win": 10, "loss": -1, "progress": 0.9, "noprogress": -0.3, "YOLO": -0.3}
+rewards = {"win": 0.9, "loss": -1, "progress": 0.9, "noprogress": -0.3, "YOLO": -0.3}
 env = Minesweeper(display=False, FULL=FULL, ROWS=rows, COLS=cols, MINES=mines, rewards=rewards)
 
 n_inputs = rows*cols*10 if FULL else rows*cols*2
-n_hidden = rows*cols*10
-n_hidden2 = 200
-n_hidden3 = 200
-n_hidden4 = 200
+n_hidden = [rows*cols*10, 200, 200, 200, 200]
 n_outputs = rows*cols
 
+# Model
 model = Sequential()
-model.add(Dense(input_shape=(1, n_inputs), units=n_hidden, activation='relu'))
-model.add(Dense(units=n_hidden2, activation='relu'))
-model.add(Dense(units=n_hidden3, activation='relu'))
-model.add(Dense(units=n_hidden4, activation='relu'))
-model.add(Dense(units=n_outputs, activation='softmax'))
+model.add(Dense(input_shape=(1, n_inputs),
+                units=n_hidden[0],
+                activation='relu',
+                kernel_initializer='glorot_uniform',
+                bias_initializer='zeros',
+                kernel_regularizer=None,#l2(reg),
+                bias_regularizer=None))#l2(reg)))
+# Hidden
+for n_units in n_hidden[1:]:
+    model.add(Dense(units=n_units,
+                    activation='relu',
+                    kernel_initializer='glorot_uniform',
+                    bias_initializer='zeros',
+                    kernel_regularizer=None,#l2(reg),
+                    bias_regularizer=None))#l2(reg)))
+# Output
+model.add(Dense(units=n_outputs,
+                activation='softmax',
+                kernel_initializer='glorot_uniform',
+                bias_initializer='zeros',
+                kernel_regularizer=None,
+                bias_regularizer=None))
+
 model.compile(optimizer='rmsprop', loss='mean_squared_error')
 model.summary()
 
 DO_PROFILE = False
+save_dir = os.path.split(os.path.realpath(__file__))[0]
 if __name__ == '__main__':
     mp.freeze_support()
-    e = ES(fun=fitnessfun, model=model, env=env, reg={'L2': args.regu}, population=args.nags, learning_rate=args.lrte, sigma=args.sigm, workers=args.nwrk)
+    e = ES(fun=fitnessfun, model=model, env=env, reg={'L2': args.regu}, population=args.nags, learning_rate=args.lrte, sigma=args.sigm, workers=args.nwrk, save_dir=save_dir)
     e.load_checkpoint()
     
     if DO_PROFILE:
