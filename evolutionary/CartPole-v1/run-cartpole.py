@@ -1,6 +1,7 @@
 import argparse
 import cProfile
 import multiprocessing as mp
+import os
 import pstats
 import time
 
@@ -8,10 +9,9 @@ import gym
 import IPython
 import numpy as np
 from keras.layers import Dense
-from keras.models import Input, Model, Sequential, clone_model
+from keras.models import Input, Model, Sequential, clone_model, load_model
 from keras.optimizers import Adam
-from keras.regularizers import l2, l1, l1_l2
-from keras.models import load_model
+from keras.regularizers import l1, l1_l2, l2
 
 from context import core
 from core.strategies import ES, VES
@@ -49,21 +49,12 @@ parser.add_argument('--nags', type=int, default=20)
 parser.add_argument('--ngns', type=int, default=250)
 args = parser.parse_args()
 
-env = gym.make('CartPole-v0')
+env = gym.make('CartPole-v1')
 
 o_shape = env.observation_space.shape
 a_shape = env.action_space.n
 
 n_hidden = [32, 128, 128]
-
-# model = Sequential()
-# #keras.layers.BatchNormalization(input_shape=o_shape, axis=1)
-# model.add(Dense(input_shape=o_shape, units=32))
-# model.add(Dense(units=128))
-# model.add(Dense(units=128))
-# model.add(Dense(units=a_shape))
-# model.compile(optimizer='adam', loss='mean_squared_error')
-# model.summary()
 
 model = Sequential()
 model.add(Dense(input_shape=o_shape,
@@ -92,21 +83,29 @@ model.add(Dense(units=a_shape,
 model.compile(optimizer='rmsprop', loss='mean_squared_error')
 model.summary()
 
+DO_PROFILE = False
+save_dir = os.path.split(os.path.realpath(__file__))[0]
 if __name__ == '__main__':
     try:
         mp.freeze_support()
         e = ES(fun=fitnessfun, model=model, env=env, population=args.nags, 
-               learning_rate=0.01, sigma=0.1, workers=args.nwrk, reg={'L2': 0.001})
+               learning_rate=0.01, sigma=0.1, workers=args.nwrk, reg={'L2': 0.001},
+               save_dir=save_dir)
         e.load_checkpoint()
-        # cProfile.run('e.evolve(args.ngns, print_every=1, plot_every=10)', 'profilingstats')
+        
+        if DO_PROFILE:
+            cProfile.run('e.evolve(args.ngns, print_every=1, plot_every=10)', 'profilingstats')
+        
         e.evolve(args.ngns, plot_every=5, checkpoint_every=20)
-        # p = pstats.Stats('profilingstats')
-        # p.sort_stats('cumulative').print_stats(10)
-        # p.sort_stats('time').print_stats(10)
-        model = load_model('model.h5')  #model.load_weights('weights.h5')
+
+        if DO_PROFILE:
+            p = pstats.Stats('profilingstats')
+            p.sort_stats('cumulative').print_stats(10)
+            p.sort_stats('time').print_stats(10)
+        
+        model = load_model('model.h5')
         testfun(model, env, 10)
     except KeyboardInterrupt:
-        #e.make_chec
         raise
 
 
