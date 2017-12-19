@@ -17,12 +17,14 @@ from keras.optimizers import Adam
 from keras.models import load_model, save_model
 
 
-# TODO: Put method parameters into dictionary
+# TODO: Make storing of results more dynamic based on returned dictionary from fitnessfun
 # TODO: Add fitness_transform method as a property of Strategy to allow using different transforms
 # TODO: Add regularizers as functions  e.g. from keras.regularizers (l1, l2, l1_l2)
 # TODO: Implement virtual batch normalization (for each generation run some number of timesteps, 
 #       compute normalizing statistics for inputs, normalize inputs
 # TODO: Implement weight decay regularization 
+# DONE: Fitness functions output reward, dictionary_of_other_measures
+# DONE: Put method parameters into dictionary
 # DONE: Implement antithetic sampling
 
 def fitness_rank_transform(rewards):
@@ -63,7 +65,8 @@ class Strategy(object):
         self.generations = 0
         self.save_dir = save_dir if save_dir is not None else os.getcwd()
         self.results = {'generations': [], 'steps': [], 'mean_pop_rewards': [],
-                        'test_rewards': [], 'time': [], 'weight_norm': []}
+                        'test_rewards': [], 'time': [], 'weight_norm': [],
+                        'win_rate': []}
         self.parameters = {'population': self.population, 'workers': self.workers,
                            'save_dir': self.save_dir}
 
@@ -86,12 +89,23 @@ class Strategy(object):
 
     def make_checkpoint(self, gen, steps, rewards, t_start, p):
         if self.checkpoint_every and (gen is None or gen % self.checkpoint_every == 0):
+            
+            # for i in range(n_tests):
+            #     tup = self.fitnessfun(self.env, self.model)
+            #     test_reward += tup[0]
+            #     wins += tup[2]
+
             # Test current model
-            test_reward = 0
-            for i in range(10):
-                tup = self.fitnessfun(self.env, self.model)
-                test_reward += tup[0]
-            test_reward /= 10
+            n_tests = 30
+            inputs = [{'env': env, 'model': model} for env, model in
+                      zip([self.env]*n_tests, [self.model]*n_tests)]
+            output = p.map(self.evaluate_fitness, inputs)
+            test_rewards = [d['reward'] for d in output]
+            test_rewards.extend([d['reward_antithetic'] for d in output])
+            wins = [d['win'] for d in output]
+            wins.extend([d['win_antithetic'] for d in output])
+            test_reward = np.mean(test_rewards)
+            win_rate = np.sum(wins)/len(wins)
 
             # Store results
             self.results['generations'].append(gen)
@@ -100,6 +114,7 @@ class Strategy(object):
             self.results['time'].append(time.time()-t_start)
             self.results['weight_norm'].append(self.get_weight_norms(self.weights))
             self.results['mean_pop_rewards'].append(np.mean(rewards))
+            self.results['win_rate'].append(win_rate)
             self.print_progress(gen)
 
             # Save model
@@ -134,6 +149,15 @@ class Strategy(object):
             plt.savefig(os.path.join(self.save_dir, 'progress1.pdf'))
             plt.close(fig)
 
+            fig = plt.figure()
+            plt.plot(self.results['steps'], self.results['win_rate'])
+            plt.xlabel('Environment steps')
+            plt.ylabel('Win rate')
+            plt.tight_layout()
+            plt.grid()
+            plt.savefig(os.path.join(self.save_dir, 'progress2.pdf'))
+            plt.close(fig)
+
             fig = plt.figure(figsize=(4, 8))
             plt.subplot(3, 1, 1)
             plt.plot(self.results['steps'], self.results['mean_pop_rewards'])
@@ -149,7 +173,7 @@ class Strategy(object):
             plt.xlabel('Environment steps')
             plt.tight_layout()
             plt.grid()
-            plt.savefig(os.path.join(self.save_dir, 'progress2.pdf'))
+            plt.savefig(os.path.join(self.save_dir, 'progress3.pdf'))
             plt.close(fig)
 
 
@@ -183,6 +207,7 @@ class ES(Strategy):
                 inputs = [{'env': env, 'model': model} for env, model in
                           zip([self.env]*self.population, [self.model]*self.population)]
                 output = p.map(self.evaluate_fitness, inputs)
+                # output = [self.evaluate_fitness(inputs[i]) for i in range(self.population)]
                 rewards = [d['reward'] for d in output]
                 rewards.extend([d['reward_antithetic'] for d in output])
                 steps_list = [d['steps'] for d in output]
@@ -192,7 +217,7 @@ class ES(Strategy):
                 noises.extend([d['noise_antithetic'] for d in output])
                 weight_norms = [d['weight_norms'] for d in output]
                 weight_norms.extend([d['weight_norms_antithetic'] for d in output])
-
+                
                 # Squash rewards and weight norms into [0,1]
                 weight_norms_unif = uniform_transform(weight_norms)
                 rewards_unif = uniform_transform(np.array(rewards))
@@ -240,21 +265,26 @@ class ES(Strategy):
         # Permute and evaluate
         weights = self.permute_weights(noise)
         model.set_weights(weights)
-        reward, steps = self.fitnessfun(env, model)
+        reward, d = self.fitnessfun(env, model)
         weight_norms = self.get_weight_norms(weights)
         # Antithetic permute and evaluate
         weights_antithetic = self.permute_weights(noise_antithetic)
         model.set_weights(weights_antithetic)
-        reward_antithetic, steps_antithetic = self.fitnessfun(env, model)
+        reward_antithetic, d_antithetic = self.fitnessfun(env, model)
         weight_norms_antithetic = self.get_weight_norms(weights_antithetic)
-        return {'reward': reward,
-                'reward_antithetic': reward_antithetic,
-                'steps': steps,
-                'steps_antithetic': steps_antithetic,
-                'noise': noise,
-                'noise_antithetic': noise_antithetic,
-                'weight_norms': weight_norms,
-                'weight_norms_antithetic': weight_norms_antithetic}
+        # Store standard outputs
+        out = {'reward': reward,
+               'reward_antithetic': reward_antithetic,
+               'noise': noise,
+               'noise_antithetic': noise_antithetic,
+               'weight_norms': weight_norms,
+               'weight_norms_antithetic': weight_norms_antithetic}
+        # Store additional outputs from fitness function
+        for k, v in d.items():
+            out[k] = v
+        for k, v in d_antithetic.items():
+            out[k+'_antithetic'] = v
+        return out
 
     def permute_weights(self, noise):
         weights = []
@@ -265,7 +295,7 @@ class ES(Strategy):
     def get_noise(self):
         noise = []
         noise_antithetic = []
-        for w in self.weights:
+        for w in self.model.get_weights():
             r = np.random.randn(*w.shape)
             noise.append(r)
             noise_antithetic.append(-r)

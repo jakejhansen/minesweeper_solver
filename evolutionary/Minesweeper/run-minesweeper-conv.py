@@ -7,7 +7,7 @@ import time
 import gym
 import IPython
 import numpy as np
-from keras.layers import Dense
+from keras.layers import Dense, Conv2D, Flatten
 from keras.models import Input, Model, Sequential, clone_model, load_model
 from keras.optimizers import Adam
 
@@ -22,14 +22,20 @@ def fitnessfun(env, model):
     observation = env.reset()
     steps = 0
     while not done and steps < rows*cols-mines:
-        action = model.predict(observation.reshape((1, 1)+observation.shape))
+        # Predict action
+        action = model.predict(observation.reshape((1, rows, cols, n_chs)))
+        # Mask invalid moves (no need to renormalize when argmaxing)
+        mask = env.get_validMoves().flatten()
+        action[0, ~mask] = 0
+        # Step and get reward
         observation, reward, done, info = env.step(np.argmax(action))
         total_reward += reward
         steps += 1
-    return total_reward, steps
+    win = True if done and reward is 0.9 else False
+    return total_reward, {'steps': steps, 'win': win}
 
 
-def testfun(model, env, episodes):
+def testfun(env, model, episodes):
     total_reward = []
     try:
         for i in range(episodes):
@@ -40,7 +46,7 @@ def testfun(model, env, episodes):
             t = 0
             while not done and t < rows*cols-mines:
                 input()
-                action = model.predict(observation.reshape((1, 1)+observation.shape))
+                action = model.predict(observation.reshape((1, rows, cols, n_chs)))
                 observation, reward, done, info = env.step(np.argmax(action))
                 total_reward[i] += reward
                 t += 1
@@ -56,10 +62,10 @@ parser.add_argument('--nags', type=int, default=20)
 parser.add_argument('--ngns', type=int, default=10000)
 parser.add_argument('--cint', type=int, default=20)
 parser.add_argument('--sigm', type=float, default=0.1)
-parser.add_argument('--lrte', type=float, default=0.1)
+parser.add_argument('--lrte', type=float, default=0.01)
 parser.add_argument('--regu', type=float, default=0.001)
-parser.add_argument('--size', type=int, default=6)
-parser.add_argument('--mine', type=int, default=7)
+parser.add_argument('--size', type=int, default=8)
+parser.add_argument('--mine', type=int, default=10)
 
 args = parser.parse_args()
 
@@ -71,14 +77,18 @@ OUT = 'FULL'
 rewards = {"win": 0.9, "loss": -1, "progress": 0.9, "noprogress": -0.3, "YOLO": -0.3}
 env = Minesweeper(display=False, OUT=OUT, ROWS=rows, COLS=cols, MINES=mines, rewards=rewards)
 
-n_inputs = rows*cols*10 if OUT is 'FULL' else rows*cols*2
-n_hidden = [rows*cols*10, 200, 200, 200, 200]
+n_chs = 10 if OUT is 'FULL' else 2
+n_hidden = [200, 200, 200, 200]
 n_outputs = rows*cols
 
 # Model
 model = Sequential()
-model.add(Dense(input_shape=(1, n_inputs),
-                units=n_hidden[0],
+# Convs
+model.add(Conv2D(15, (5, 5), input_shape=(rows, cols, n_chs), padding='same', activation='relu'))
+model.add(Conv2D(35, (3, 3), padding='same', activation='relu'))
+# Dense
+model.add(Flatten())
+model.add(Dense(units=n_hidden[0],
                 activation='relu',
                 kernel_initializer='glorot_uniform',
                 bias_initializer='zeros',
@@ -107,26 +117,26 @@ DO_PROFILE = False
 save_dir = os.path.split(os.path.realpath(__file__))[0]
 if __name__ == '__main__':
     mp.freeze_support()
-    #e = ES(fun=fitnessfun, model=model, env=env, reg={'L2': args.regu}, population=args.nags, learning_rate=args.lrte, sigma=args.sigm, workers=args.nwrk, save_dir=save_dir)
-    #e.load_checkpoint()
+    e = ES(fun=fitnessfun, model=model, env=env, reg={'L2': args.regu}, population=args.nags, learning_rate=args.lrte, sigma=args.sigm, workers=args.nwrk, save_dir=save_dir)
+    e.load_checkpoint()
     
     if DO_PROFILE:
         cProfile.run('e.evolve(args.ngns, print_every=1, plot_every=10)', 'profilingstats')
     
-    # e.evolve(args.ngns, checkpoint_every=args.cint, plot_every=args.cint)
+    e.evolve(args.ngns, checkpoint_every=args.cint, plot_every=args.cint)
     
     if DO_PROFILE:
         p = pstats.Stats('profilingstats')
         p.sort_stats('cumulative').print_stats(10)
         p.sort_stats('time').print_stats(10)
     
-    model = load_model('model.h5')
-    env = Minesweeper(display=True, OUT=OUT, ROWS=rows, COLS=cols, MINES=mines, rewards=rewards)
-    testfun(model, env, 10)
+    #model = load_model('model.h5')
+    #env = Minesweeper(display=True, OUT=OUT, ROWS=rows, COLS=cols, MINES=mines, rewards=rewards)
+    #fitnessfun(env, model)
 
 """
 model = Sequential()
-model.add(Dense(input_shape=(1, n_inputs),
+model.add(Dense(input_shape=(1, n_chs),
                 units=n_hidden[0],
                 activation='relu',
                 kernel_initializer='glorot_uniform',
