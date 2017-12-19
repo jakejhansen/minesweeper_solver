@@ -1,0 +1,52 @@
+### 08
+Sjov - linear tendens - langsom
+
+### 11-1
+FFN 
+CONDENSED
+population    : 75                                                                   
+workers       : 20                                                                   
+save_dir      : /zhome/c2/b/86488/Documents/deep/evolutionary/hpcjobs/Minesweeper11-1
+learning_rate : 0.1                                                                  
+sigma         : 0.1                                                                  
+reg           : {'L2': 0.003}         
+
+
+### 12-1
+FFN
+CONDENSED
+population    : 100                                                                  
+workers       : 20                                                                   
+save_dir      : /zhome/c2/b/86488/Documents/deep/evolutionary/hpcjobs/Minesweeper12-1
+learning_rate : 0.1                                                                  
+sigma         : 0.1                                                                  
+reg           : {'L2': 0.0}                                                          
+
+
+### 12-3
+FFN
+CONDENSED
+population    : 100                                                                  
+workers       : 20                                                                   
+save_dir      : /zhome/c2/b/86488/Documents/deep/evolutionary/hpcjobs/Minesweeper12-3
+learning_rate : 0.1                                                                  
+sigma         : 0.1                                                                  
+reg           : {'L2': 0.03}                                                         
+
+
+### 13-1
+FFN
+FULL
+VALID ACTIONS ONLY
+population    : 100                                                                  
+workers       : 24                                                                   
+save_dir      : /zhome/c2/b/86488/Documents/deep/evolutionary/hpcjobs/Minesweeper13-1
+learning_rate : 0.01                                                                 
+sigma         : 0.1                                                                  
+reg           : {'L2': 0.003}                                                        
+
+
+
+### 14
+
+

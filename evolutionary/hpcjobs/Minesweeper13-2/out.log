@@ -1,0 +1,18 @@
+population    : 100                                                                  
+workers       : 24                                                                   
+save_dir      : /zhome/c2/b/86488/Documents/deep/evolutionary/hpcjobs/Minesweeper13-2
+learning_rate : 0.1                                                                  
+sigma         : 0.1                                                                  
+reg           : {'L2': 0.003}                                                        
+
+Generation      0 | Steps        667 | Test reward     0.1 | Mean pop reward    -0.1 | Time  204.94 seconds
+Generation    100 | Steps      60559 | Test reward     0.3 | Mean pop reward    -0.4 | Time  774.83 seconds
+Generation    200 | Steps     161665 | Test reward    -0.8 | Mean pop reward    -1.7 | Time 1353.23 seconds
+Generation    300 | Steps     377442 | Test reward    -0.6 | Mean pop reward    -3.2 | Time 1930.31 seconds
+Generation    400 | Steps     671422 | Test reward    -1.1 | Mean pop reward    -4.2 | Time 2505.14 seconds
+Generation    500 | Steps    1043094 | Test reward    -1.2 | Mean pop reward    -5.2 | Time 3087.13 seconds
+Generation    600 | Steps    1473368 | Test reward    -0.8 | Mean pop reward    -7.1 | Time 3668.47 seconds
+Generation    700 | Steps    1941123 | Test reward    -7.1 | Mean pop reward    -6.3 | Time 4253.90 seconds
+Generation    800 | Steps    2450548 | Test reward    -3.3 | Mean pop reward    -7.5 | Time 4834.95 seconds
+Generation    900 | Steps    2979408 | Test reward    -4.7 | Mean pop reward    -6.9 | Time 5421.49 seconds
+Generation   1000 | Steps    3542911 | Test reward    -9.0 | Mean pop reward    -8.2 | Time 6006.04 seconds

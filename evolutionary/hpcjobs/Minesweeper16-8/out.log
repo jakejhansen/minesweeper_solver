@@ -1,0 +1,39 @@
+population    : 50                                                                   
+workers       : 20                                                                   
+save_dir      : /zhome/c2/b/86488/Documents/deep/evolutionary/hpcjobs/Minesweeper16-8
+learning_rate : 0.1                                                                  
+sigma         : 0.1                                                                  
+reg           : {'L2': 0.003}                                                        
+
+Generation      0 | Steps        218 | Test reward    -0.3 | Mean pop reward    -0.4 | Time  252.27 seconds
+Generation    100 | Steps      97291 | Test reward    -4.5 | Mean pop reward    -4.3 | Time  485.19 seconds
+Generation    200 | Steps     261730 | Test reward    -4.0 | Mean pop reward    -4.7 | Time  695.57 seconds
+Generation    300 | Steps     429852 | Test reward    -5.2 | Mean pop reward    -4.0 | Time  906.27 seconds
+Generation    400 | Steps     603956 | Test reward    -3.3 | Mean pop reward    -5.2 | Time 1118.44 seconds
+Generation    500 | Steps     780100 | Test reward    -5.7 | Mean pop reward    -4.7 | Time 1330.41 seconds
+Generation    600 | Steps     954468 | Test reward    -4.2 | Mean pop reward    -5.2 | Time 1542.42 seconds
+Generation    700 | Steps    1125553 | Test reward    -3.9 | Mean pop reward    -4.8 | Time 1754.20 seconds
+Generation    800 | Steps    1294149 | Test reward    -4.3 | Mean pop reward    -4.9 | Time 1966.04 seconds
+Generation    900 | Steps    1461996 | Test reward    -5.2 | Mean pop reward    -5.0 | Time 2177.39 seconds
+Generation   1000 | Steps    1629731 | Test reward    -5.3 | Mean pop reward    -5.1 | Time 2388.20 seconds
+Generation   1100 | Steps    1798289 | Test reward    -4.5 | Mean pop reward    -4.2 | Time 2617.83 seconds
+Generation   1200 | Steps    1971379 | Test reward    -5.4 | Mean pop reward    -5.1 | Time 2827.50 seconds
+Generation   1300 | Steps    2142615 | Test reward    -5.4 | Mean pop reward    -4.2 | Time 3113.46 seconds
+Generation   1400 | Steps    2312317 | Test reward    -4.8 | Mean pop reward    -4.6 | Time 3375.86 seconds
+Generation   1500 | Steps    2482775 | Test reward    -4.1 | Mean pop reward    -5.1 | Time 3585.99 seconds
+Generation   1600 | Steps    2653354 | Test reward    -4.9 | Mean pop reward    -4.2 | Time 3795.05 seconds
+Generation   1700 | Steps    2818047 | Test reward    -5.4 | Mean pop reward    -4.5 | Time 4004.05 seconds
+Generation   1800 | Steps    2981577 | Test reward    -5.0 | Mean pop reward    -5.0 | Time 4213.42 seconds
+Generation   1900 | Steps    3149526 | Test reward    -5.3 | Mean pop reward    -4.3 | Time 4425.40 seconds
+Generation   2000 | Steps    3321364 | Test reward    -4.5 | Mean pop reward    -5.0 | Time 4635.62 seconds
+Generation   2100 | Steps    3492021 | Test reward    -5.0 | Mean pop reward    -4.7 | Time 4846.50 seconds
+Generation   2200 | Steps    3659878 | Test reward    -4.5 | Mean pop reward    -5.4 | Time 5063.02 seconds
+Generation   2300 | Steps    3828606 | Test reward    -5.6 | Mean pop reward    -4.6 | Time 5272.68 seconds
+Generation   2400 | Steps    3996306 | Test reward    -4.6 | Mean pop reward    -4.3 | Time 5480.78 seconds
+Generation   2500 | Steps    4164535 | Test reward    -4.2 | Mean pop reward    -4.7 | Time 5704.43 seconds
+Generation   2600 | Steps    4331671 | Test reward    -4.1 | Mean pop reward    -4.4 | Time 5914.78 seconds
+Generation   2700 | Steps    4497135 | Test reward    -5.4 | Mean pop reward    -4.7 | Time 6126.82 seconds
+Generation   2800 | Steps    4664157 | Test reward    -4.9 | Mean pop reward    -4.6 | Time 6339.36 seconds
+Generation   2900 | Steps    4830934 | Test reward    -5.0 | Mean pop reward    -4.6 | Time 6555.55 seconds
+Generation   3000 | Steps    4999684 | Test reward    -5.4 | Mean pop reward    -4.9 | Time 6767.07 seconds
+Generation   3100 | Steps    5165218 | Test reward    -4.7 | Mean pop reward    -4.9 | Time 6978.06 seconds
