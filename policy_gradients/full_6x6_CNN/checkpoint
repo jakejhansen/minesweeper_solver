@@ -1,0 +1,3 @@
+model_checkpoint_path: "condensed_8x8_v1_best.ckpt"
+all_model_checkpoint_paths: "condensed_8x8_v1.ckpt"
+all_model_checkpoint_paths: "condensed_8x8_v1_best.ckpt"

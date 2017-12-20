@@ -1,0 +1,3 @@
+model_checkpoint_path: "full_6x6_v1.ckpt"
+all_model_checkpoint_paths: "full_6x6_v1_best.ckpt"
+all_model_checkpoint_paths: "full_6x6_v1.ckpt"
