@@ -14,7 +14,7 @@ epochs = 100000 # number of training batches
 batch_size = 200 # number of timesteps in a batch
 rollout_limit = 50 # max rollout length
 discount_factor = 0 # reward discount factor (gamma), 1.0 = no discount
-learning_rate = 0.00002  # you know this by now #0.001, 
+learning_rate = 0.001  # you know this by now #0.001, 
                                                #5600: 78% win --> LR: 0.0001
                                                #6801: 87% win --> LR: 0.00002
                                                 
@@ -64,11 +64,7 @@ conv2 = tf.layers.conv2d(inputs=conv1,filters=36,kernel_size=[3, 3],padding="sam
 conv2_flat = tf.contrib.layers.flatten(conv2)
 l_hidden = tf.layers.dense(inputs=conv2_flat, units=n_hidden, activation=relu, name='l_hidden')
 l_hidden2 = tf.layers.dense(inputs=l_hidden, units=n_hidden2, activation=relu, name='l_hidden2')
-#l_hidden2 = tf.layers.dropout(l_hidden2, rate=dropout)
 l_hidden3 = tf.layers.dense(inputs=l_hidden2, units=n_hidden3, activation=relu, name='l_hidden3')
-#l_hidden3 = tf.layers.dropout(l_hidden3, rate=dropout)
-#l_hidden4 = tf.layers.dense(inputs=l_hidden3, units=n_hidden4, activation=relu, name='l_hidden4')
-#l_hidden3 = tf.layers.dropout(l_hidden3, rate=dropout)
 l_out = tf.layers.dense(inputs=l_hidden3, units=n_outputs, activation=softmax, name='l_out')
 
 # print network
@@ -109,6 +105,7 @@ def get_rollout(sess, env, rollout_limit=None, stochastic=False, seed=None):
     for i in range(rollout_limit):
         a = get_action(sess, s, stochastic)
         s1, r, done, _ = env.step(a)
+        s1 = s1.flatten()
         states.append(s)
         actions.append(a)
         rewards.append(r)
@@ -118,15 +115,7 @@ def get_rollout(sess, env, rollout_limit=None, stochastic=False, seed=None):
 
 def get_action(sess, state, stochastic=False):
     """Choose an action, given a state, with the current policy network."""
-    # get action probabilities
     a_prob = sess.run(fetches=l_out, feed_dict={states_pl: np.atleast_2d(state)})
-    #valid_moves = env.get_validMoves()
-    #a_prob[~valid_moves.flatten().reshape(1,36)] = 0
-    #a_prob[a_prob < 0.00001] = 0.000001
-    #a_prob / np.sum(a_prob)
-    #a_prob = normalize(a_prob, norm = 'l1')
-    #if abs(1-np.sum(a_prob)) > 0.01:
-    #    a_prob = sess.run(fetches=l_out, feed_dict={states_pl: np.atleast_2d(state)})
 
     if stochastic:
         # sample action from distribution
@@ -169,6 +158,7 @@ def get_winrate(sess, env):
                 a = get_action(sess, s, stochastic=False)
             moves += 1
             s, r, done, _ = env.step(a)
+            s = s.flatten()
             if r == 1:
                 won_games += 1
             if r == -1:
@@ -217,7 +207,7 @@ try:
             timesteps = 0
             while timesteps < batch_size:
                 _rollout_limit = min(rollout_limit, batch_size - timesteps) # limit rollout to match batch_size
-                s, a, r, t = get_rollout(sess, env, rollout_limit, stochastic=True, seed=epoch)          
+                s, a, r, t = get_rollout(sess, env, rollout_limit, stochastic=True, seed=epoch)     
                 states.append(s)
                 actions.append(a)
                 rewards.append(r)
@@ -231,13 +221,9 @@ try:
                 advantages_pl: np.concatenate(advantages),
                 learning_rate_pl: learning_rate
             })            
-            # validation
-            #val_rewards = [get_rollout(sess, env, rollout_limit, stochastic=True, seed=(epochs+i))[2] for i in range(10)]
-            # store and print training statistics
-            #mtr = np.mean([np.sum(r) for r in rewards])
-            #mvr = np.mean([np.sum(r) for r in val_rewards])
+
+
             mtr = np.mean([np.sum(r) for r in rewards])
-            #mvr = np.mean(np.sort([np.sum(r) for r in val_rewards])[5:-5])
             statistics.append([epoch, env.get_nbactions(), mtr, loss, win_rate])
             if epoch % 10 == 0:
                 print('%4d. training reward: %6.2f, loss: %7.4f' % (epoch+1, mtr, loss))

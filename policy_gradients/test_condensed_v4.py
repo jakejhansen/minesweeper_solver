@@ -198,6 +198,7 @@ if __name__ == "__main__":
                 moves += 1
                 r_prev = r
                 s, r, done, _ = env.step(a)
+                s = s.flatten()
                 if display:
                     print("Reward = ", r)
                 #print("\nReward = {}".format(r))

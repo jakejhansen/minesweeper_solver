@@ -116,6 +116,7 @@ if __name__ == "__main__":
                     input()
 
                 s, r, done, _ = env.step(a)
+                s = s.flatten()
                 if display:
                     if r == 1:
                         print("WIN")

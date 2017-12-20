@@ -368,22 +368,13 @@ class Minesweeper(object):
     # Wrap to openai gym API
     def step(self, a):
         a = np.unravel_index(a, (self.ROWS,self.COLS))
-        d2 = self.get_state()
         d = self.action(a)
-        if self.OUT == "CONDENSED":
-            d["s"] = np.reshape(self.stateConverter(d["s"]),(self.ROWS*self.COLS*2))
-        elif self.OUT == "FULL":
-            d["s"] = np.reshape(self.stateConverter(d["s"]),(self.ROWS*self.COLS*10))
-
+        d["s"] = self.stateConverter(d["s"])
         return d["s"], d["r"], d["d"], None
 
     def reset(self):
         self.initGame()
-
-        if self.OUT == "CONDENSED":
-            return np.reshape(self.stateConverter(self.state),(self.ROWS*self.COLS*2))
-        elif self.OUT =="FULL":
-            return np.reshape(self.stateConverter(self.state),(self.ROWS*self.COLS*10))
+        return self.stateConverter(self.state)
 
     def get_nbactions(self):
         return(self.nb_actions)

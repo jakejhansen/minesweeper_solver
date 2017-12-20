@@ -112,6 +112,7 @@ def get_rollout(sess, env, rollout_limit=None, stochastic=False, seed=None):
     for i in range(rollout_limit):
         a = get_action(sess, s, stochastic)
         s1, r, done, _ = env.step(a)
+        s1 = s1.flatten()
         states.append(s)
         actions.append(a)
         rewards.append(r)
@@ -121,15 +122,7 @@ def get_rollout(sess, env, rollout_limit=None, stochastic=False, seed=None):
 
 def get_action(sess, state, stochastic=False):
     """Choose an action, given a state, with the current policy network."""
-    # get action probabilities
     a_prob = sess.run(fetches=l_out, feed_dict={states_pl: np.atleast_2d(state)})
-    #valid_moves = env.get_validMoves()
-    #a_prob[~valid_moves.flatten().reshape(1,36)] = 0
-    #a_prob[a_prob < 0.00001] = 0.000001
-    #a_prob / np.sum(a_prob)
-    #a_prob = normalize(a_prob, norm = 'l1')
-    #if abs(1-np.sum(a_prob)) > 0.01:
-    #    a_prob = sess.run(fetches=l_out, feed_dict={states_pl: np.atleast_2d(state)})
 
     if stochastic:
         # sample action from distribution
@@ -172,6 +165,7 @@ def get_winrate(sess, env):
                 a = get_action(sess, s, stochastic=False)
             moves += 1
             s, r, done, _ = env.step(a)
+            s = s.flatten()
             if r == 1:
                 won_games += 1
             if r == -1:

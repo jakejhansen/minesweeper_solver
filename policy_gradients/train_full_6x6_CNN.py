@@ -116,6 +116,7 @@ def get_rollout(sess, env, rollout_limit=None, stochastic=False, seed=None):
     for i in range(rollout_limit):
         a = get_action(sess, s, stochastic)
         s1, r, done, _ = env.step(a)
+        s1 = s1.flatten()
         states.append(s)
         actions.append(a)
         rewards.append(r)
@@ -168,6 +169,7 @@ def get_winrate(sess, env):
                 a = get_action(sess, s, stochastic=False)
             moves += 1
             s, r, done, _ = env.step(a)
+            s = s.flatten()
             if r == 1:
                 won_games += 1
             if r == -1:
@@ -230,11 +232,7 @@ try:
                 advantages_pl: np.concatenate(advantages),
                 learning_rate_pl: learning_rate
             })            
-            # validation
-            #val_rewards = [get_rollout(sess, env, rollout_limit, stochastic=True, seed=(epochs+i))[2] for i in range(10)]
-            # store and print training statistics
-            #mtr = np.mean([np.sum(r) for r in rewards])
-            #mvr = np.mean([np.sum(r) for r in val_rewards])
+
             mtr = np.mean([np.sum(r) for r in rewards])
             #mvr = np.mean(np.sort([np.sum(r) for r in val_rewards])[5:-5])
             statistics.append([epoch, env.get_nbactions(), mtr, loss, win_rate])
