@@ -1,0 +1,194 @@
+Received: from AM5PR0401MB2497.eurprd04.prod.outlook.com (10.169.244.141) by
+ DB6PR0401MB2504.eurprd04.prod.outlook.com (10.169.224.143) with Microsoft
+ SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P256) id 15.20.239.5 via Mailbox
+ Transport; Thu, 16 Nov 2017 17:01:42 +0000
+Received: from DB5PR04CA0034.eurprd04.prod.outlook.com
+ (2a01:111:e400:598c::44) by AM5PR0401MB2497.eurprd04.prod.outlook.com
+ (2603:10a6:203:36::13) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P256) id 15.20.239.5; Thu, 16
+ Nov 2017 17:01:42 +0000
+Received: from VE1EUR01FT051.eop-EUR01.prod.protection.outlook.com
+ (2a01:111:f400:7e01::206) by DB5PR04CA0034.outlook.office365.com
+ (2a01:111:e400:598c::44) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.239.5 via Frontend
+ Transport; Thu, 16 Nov 2017 17:01:41 +0000
+Authentication-Results: spf=none (sender IP is 192.38.82.194)
+ smtp.mailfrom=cc.dtu.dk; dtudk.mail.onmicrosoft.com; dkim=none (message not
+ signed) header.d=none;dtudk.mail.onmicrosoft.com; dmarc=none action=none
+ header.from=cc.dtu.dk;
+Received-SPF: None (protection.outlook.com: cc.dtu.dk does not designate
+ permitted sender hosts)
+Received: from mail.win.dtu.dk (192.38.82.194) by
+ VE1EUR01FT051.mail.protection.outlook.com (10.152.3.8) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.20.218.12 via Frontend Transport; Thu, 16 Nov 2017 17:01:41 +0000
+Received: from ait-pexdark02.win.dtu.dk (192.38.82.203) by
+ ait-pexsrv01.win.dtu.dk (192.38.82.194) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1034.26; Thu, 16 Nov 2017 18:01:40 +0100
+Received: from ait-pexedg02.win.dtu.dk (192.38.82.192) by
+ ait-pexdark02.win.dtu.dk (192.38.82.203) with Microsoft SMTP Server
+ (version=TLS1_0, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA_P256) id
+ 15.1.1034.26 via Frontend Transport; Thu, 16 Nov 2017 18:01:39 +0100
+Received: from spamfilter4.dtu.dk (192.38.80.33) by ait-pexedg02.win.dtu.dk
+ (192.38.82.192) with Microsoft SMTP Server (TLS) id 14.3.361.1; Thu, 16 Nov
+ 2017 18:01:32 +0100
+Received: from mail1.cc.dtu.dk (mail.cc.dtu.dk [130.225.82.7])	by
+ spamfilter4.dtu.dk  with ESMTP id vAGH1UGE018480-vAGH1UGF018480	for
+ <s132315@student.dtu.dk>; Thu, 16 Nov 2017 18:01:30 +0100
+Received: by mail1.cc.dtu.dk (Postfix, from userid 106)	id 4ECEA19E625; Thu,
+ 16 Nov 2017 18:01:30 +0100 (CET)
+X-Spam-Checker-Version: SpamAssassin 3.3.2 (2011-06-06) on mail1.cc.dtu.dk
+X-Spam-Level:
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00 autolearn=ham
+	version=3.3.2
+Received: from rt4.cc.dtu.dk (rt4.cc.dtu.dk [130.225.82.160])	by
+ mail1.cc.dtu.dk (Postfix) with ESMTP id BAB9F19E624	for
+ <s132315@student.dtu.dk>; Thu, 16 Nov 2017 18:01:28 +0100 (CET)
+Received: by rt4.cc.dtu.dk (Postfix, from userid 48)	id A8C247FB60; Thu, 16
+ Nov 2017 18:01:28 +0100 (CET)
+Subject: [[DCC Support] #15729] Multiprocessing in Python
+From: Andrea Bordoni via RT <support@cc.dtu.dk>
+Reply-To: <support@cc.dtu.dk>
+In-Reply-To: <7074BA49-727E-407C-BF59-858A7883ADDB@win.dtu.dk>
+References: <RT-Ticket-15729@itsupport.student.dtu.dk>
+ <7074BA49-727E-407C-BF59-858A7883ADDB@win.dtu.dk>
+Message-ID: <rt-4.2.10-2552-1510851688-444.15729-6-0@itsupport.student.dtu.dk>
+X-RT-Loop-Prevention: DTU Databar Service Desk
+X-RT-Ticket: DTU Databar Service Desk #15729
+X-Managed-BY: RT 4.2.10 (http://www.bestpractical.com/rt/)
+X-RT-Originator: andbor@dtu.dk
+To: <s132315@student.dtu.dk>
+Content-Type: text/plain; charset="utf-8"
+X-RT-Original-Encoding: utf-8
+Precedence: bulk
+Date: Thu, 16 Nov 2017 18:01:28 +0100
+Content-Transfer-Encoding: 8bit
+X-FEAS-SYSTEM-WL: 130.225.82.7
+Return-Path: apache@cc.dtu.dk
+X-OrganizationHeadersPreserved: ait-pexsrv01.win.dtu.dk
+X-MS-Exchange-Organization-Network-Message-Id: 0a8938d5-d4fc-411d-c97f-08d52d13b54b
+X-EOPAttributedMessage: 0
+X-MS-Exchange-Organization-MessageDirectionality: Originating
+X-Forefront-Antispam-Report: CIP:192.38.82.194;IPV:NLI;CTRY:DK;EFV:NLI;SFV:NSPM;SFS:(6009001)(2980300002)(428002)(3190300001)(199003)(51874003)(189002)(46386002)(6266002)(305945005)(90966002)(47776003)(5660300001)(2870700001)(189998001)(3450700001)(101416001)(50466002)(45336002)(9686003)(103686004)(8676002)(79362002)(74482002)(23676003)(1096003)(43066004)(8936002)(2351001)(356003)(33646002)(42882006)(2950100002)(6916009)(52956003)(42186006)(246002)(76176999)(105586002)(50986999)(106466001)(54356999)(102196002)(19627235001);DIR:INB;SFP:;SCL:1;SRVR:AM5PR0401MB2497;H:mail.win.dtu.dk;FPR:;SPF:None;PTR:ait-pexsrv01.win.dtu.dk;A:0;MX:1;LANG:en;
+X-Microsoft-Exchange-Diagnostics: 1;VE1EUR01FT051;1:49RY0BKk3634Uyr8TEtzwx2VylffYKlTyyQKU7Sdke6srtGqNfibiJ/u4Z8h6qw9HvXtQ9mhegg+FGvM2tV8ydApXJ5qyKvn0AcJcj2XE8ch7aeRO2KWrk2+5UktPs/s
+X-CrossPremisesHeadersPromoted: VE1EUR01FT051.eop-EUR01.prod.protection.outlook.com
+X-CrossPremisesHeadersFiltered: VE1EUR01FT051.eop-EUR01.prod.protection.outlook.com
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 0a8938d5-d4fc-411d-c97f-08d52d13b54b
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(22001)(4534020)(4602075)(4627115)(201703031133081)(2017052603199);SRVR:AM5PR0401MB2497;
+X-Microsoft-Exchange-Diagnostics: 1;AM5PR0401MB2497;3:DQZCOyr0WwVP3q5Y+aJ6BGAzKGMp/svsUHqyl0ukTbXUZQm6wC4P3NZrJ0h7NUuF4t9FzP5sYl+mw/nRrqfaXzl44VOFxY9sKNC7XiiKojMpmA31F8MrTMs5KVrT+iUtfMCmQiloTQwnOvAicfa7dx3WBH3AsG4Dogcp0HSzEcdU+50kTWslr1INY5B4OpPQXvMGLMFhOXntVnpWfaoGrHar856E0KKneI59DEcbCF+h+iwgG1ul+5/PxeZJPHKoQLeuqkzvDPeUELf10QE390athejD0/XnMxrcXbZdTta+neSIs3BXUzbt9FUbJNXDeZIMHX6ngRTkvJbtT8en/tTwn90z4sQ+0lVGjABTbaQ=;25:9vwV/pOmQS+Hnddr74VseCpWHFikEn19GCzE2Rs4srXb+0LNWPzSKkrIU+LQ0tdO3OHVb6KkS9DMcK27n+n16mfX/bH/e9FUkSqJsZNbH+JdYfjNdEpMg1vkrv+iCH1RWpmTbvStrtaHPtKT5ozuoGq6MEtr+wEFUYQFMUvNvQAEgbEdFZVgF1YugJTL99XxA+wxDAGDn76pBE7lkjoDA7afWSGsx0tTKE7YDwMR9cLxG9oStR68bEUAL93W7xS1ZXsiRSwihfbWledglBkWhvC6eoz9YU+5lba33Zpwcs3zbUgFA4Y3Yj1Mk93z4ONbdwKe8oz4+nHxJOiQzzFDvA==
+X-MS-TrafficTypeDiagnostic: AM5PR0401MB2497:
+X-Microsoft-Exchange-Diagnostics: 1;AM5PR0401MB2497;31:yKlLJO/dhvP/dlzhyojl1Tm/FpUI6PdD+WcI67NHnpScB6Vr1M7du1jOctS4ckm8fGJ8LS7MyjfucfHdjezcvuPzKKwrillunoqR0sSCShVtBv5UaeRby0U2/8y9iB9JDGf1JhPfHiMr/tGaAe4MToEhZzu5hf93EB0d7XBKh/OiqUw5s2NxqGWqYjsGHqeipAEKSD+etBlrZcoNBUQw72Eu1JLJAhA6wT3+/HlN41k=;4:UlM12k1Ge4vPkM5KcUOuhpssbTr3R6c/F2R+ykgLuIGC5xt6FyRtHHTsWqIlPWMWU/smoX0HIfzo+v3Lmz9RcitFbAegwi507bZFEwnoTG6Wll6cKaUKVJK8w2bi1jlbcqDVsQjfTHtz56X/y3jopkpgZNZfLku4yeXSpYI63017j0BP3cV0ngGkOgNxFcZWrhdgnkPdcUIsxrgABCG3WeoeWbxXX3eKjPgfCQEDmA00QEfrJplJexx1WInEa3Zltj0s1N6zrKMd+71zVD6t5A==
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(100000700101)(100105000095)(100000701101)(100105300095)(100000702101)(100105100095)(2401047)(8121501046)(93006095)(93003095)(100000703101)(100105400095)(3231022)(10201501046)(3002001)(201708071742011)(100000704101)(100105200095)(100000705101)(100105500095);SRVR:AM5PR0401MB2497;BCL:0;PCL:0;RULEID:(100000800101)(100110000095)(100000801101)(100110300095)(100000802101)(100110100095)(100000803101)(100110400095)(100000804101)(100110200095)(100000805101)(100110500095);SRVR:AM5PR0401MB2497;
+X-MS-Exchange-Organization-SpamFilter-OverrideCategory: Default
+X-MS-Exchange-Organization-SCL: 1
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtBTTVQUjA0MDFNQjI0OTc7MjM6QzU3QjdkUnhhU0ZFR284bTZ4MWVyckpI?=
+ =?utf-8?B?UkQyU2w1VGh0OElkTjVNcGJOTFhMYVNxcVZodDVoZG5yb2NwMGw0ZVZobTcv?=
+ =?utf-8?B?ckJRVHFxMUFNcFgyV21IWCtWdEZKZ0ZrY2dqNzJ5aHczQkxEVHlreitCdEJB?=
+ =?utf-8?B?bTIxbGRCa1E3MUJrSmNaaFQ5VGV2UlVHTDR1WC80TUtHUnZWVnJ3bzRHd2J6?=
+ =?utf-8?B?cU9qRmdtYWJMbjFkSnFXNzlsb21sQ25YTi8zZDhlaWRGTVkrM29pcEhCdUFs?=
+ =?utf-8?B?MDVNTjVidUNHaSsybll0M1JnWVJEZXhkZlRYanNGQlM3Rm1tdllWN25IdTJo?=
+ =?utf-8?B?YkwxS2dvczRRcWQ5QjNibHlPN2R3SXJHVTlNY0Z0cUNEMGlaMmVkVEtkcUdi?=
+ =?utf-8?B?Nm1jQjdURlZpZi9jbnppanNBcUJpUUJQQ3lhQ2czOHN0Zy9vQkR0Y0s4Q3h6?=
+ =?utf-8?B?YzNsWFZxRUFWQm5wQ0xWZkVCdEh5S2JNZG53eENMRFhhOUJkMFJWeVVBcFpO?=
+ =?utf-8?B?ZmJQTXRFMSsyMmUvcU12RFVFbGI3cUVCZ0hreEdnajJnaUliR0VsMHhtZjRI?=
+ =?utf-8?B?T0ZSMUdxYis3Rm9oOGlJRDJDM3BzYWJhTEg2ajU0S29iY0tNY0xWUTJlTXVI?=
+ =?utf-8?B?c09jdnNKMlUrK0tpcmdYRnhYRld5VjZtYkRoQ2hCNlJWMjNRV2N4VklSTTJZ?=
+ =?utf-8?B?S2lidEc1TDN5ZlVWNGRRL1ZJaWpSZWFSQ3dPMTBmM01VUk5weXVhVndkbU5y?=
+ =?utf-8?B?anBtcGRpRjZ3Q05yRjQrUGFpRFdDVk54dVFVY3FXY2RXcjBLMTZCbTBKOG9B?=
+ =?utf-8?B?eHJ6ZG41QjlwejJMd21WU3QzY0duRzJlNzAxNFFFTW9pTStzZ3F3TEs0ajh1?=
+ =?utf-8?B?OHFrUzIvZmV4dHd4SUJXR1dERnhGYTBqMEgwczllKzJQTXAxajZqbWlsbTZx?=
+ =?utf-8?B?VkJxa3FJWkdCNmUyM2tscVhiYmlPV2cvNDRoemVVaGwyYnNkeFJ4dUZ4WnJE?=
+ =?utf-8?B?dDVrc2J1eXZ0SWVDZkJlOUlTNjJUYU1xcDYvNEVVZXhOdXQ3YWRRRzJISUlq?=
+ =?utf-8?B?a09CdmFFMGxhajRzbjZiRGh3QnU0QldJM0hoSE9PQW1IUXl2YlBPTTVyaTFa?=
+ =?utf-8?B?d2pXODZlMjFKK3l4aXU5L3Rpd1Q1UkdUUGxCWW1ORzRZcmhxa0pFeG83UG9y?=
+ =?utf-8?B?MUp4cjdub1BiQlpqc1d6U1NYUFZrdjkrM2M4dEN0UjB0MkFHVjZrRXV0cXZD?=
+ =?utf-8?B?KzJMUnpYRkZKMVZoSGF1Qk4vb0JlQzFXUDgydEhGZGR3clRTcEFXN0RyaHp6?=
+ =?utf-8?B?OGMvLytvaVRBN1ZpNlhmNjEyMVlvRjVGcStsNURWUUlCMGhkN011VDNKdG5y?=
+ =?utf-8?B?MjhkVnhlL3d2WENGd1FkVlJ6K3FiczJkbVZpeHA5NkkwM2RWU21OYU16T0VS?=
+ =?utf-8?Q?F6PrHufY=3D?=
+X-Microsoft-Exchange-Diagnostics: 1;AM5PR0401MB2497;6:ve5idqZlzM7N+9KAkRSozb0qMY07iwGQk5baj8AFUppLrjQNSa7o+qcjCZ8Ib61SdN9rFe/yZ/E25BSEr9TKvFdazTfAeBUiNtI7m7aie7/oa3XRKAsgwCRsZL0KAClgIbnKkgDfrdIPHHC+tY/qz1/63dy1p65csSTzok9YQ5II51YlaMYOaC0EWlpTt3q1nGJilwmVlEDP+AyJJ5eurbV7roH5fGEqiz9iGPH8SuYZWqUc0sowgtGjZdgnsC0scn5soFd+copa+Vv/LneVAxsZ39Y7K0+g59JSaFeB8L13foHAQUmlVTGjG4ViW5oLb6wxZkKGkOlIzMp49Uchh43rq4Ov1gtKlHd63XLFupQ=;5:nIVlf0Y8YXxolcFmt3jpFnh8JTESI1Vy5cUKojatqobnR8soE9IqFknxqdBjPgRm7cu4wAKNOoUaFbvlikS0ooB7jOXVNnSdve9juU6Ms5wJWM/PZzl/krOjzW2CXldp9b+QWj8F5EF7mhJAehmgK+thQ5FxyB6XiTf5znWSnNo=;24:ODWxVv1SYbt7sCjbjynMHWcqwlGA41I8LWvd00cqFio1rVKRb5/kNuRIDiYD+d0/1sXRfwo0xSaFiHcQgUTAFsTHcg0+m+Zm6HuHMhlZjMo=;7:fDZGipLSlSibR46r7qiNyjWWQ4WjkMefLCtsgY4vGCtyhs70sFoDjtmQ53LKdYELMLKBJE2d1J8F9tTqOmvne/s7rdQtBG4qRW15cHe9a5gI7OR3EjuplXDUX8ZmRWP1a+5vAgxt8/79ReqS+SITPvYBMUTJeVXPfhosKHgbZxeuIyZ1xGSyb57DXKtcedCFBIqunB4Lc6K+Rjoo9CECv390VowLjq5VKpAPJiTzhXp3/2vFF5/Wr400Pdnwfhuq
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Nov 2017 17:01:41.1127
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0a8938d5-d4fc-411d-c97f-08d52d13b54b
+X-MS-Exchange-CrossTenant-Id: f251f123-c9ce-448e-9277-34bb285911d9
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f251f123-c9ce-448e-9277-34bb285911d9;Ip=[192.38.82.194];Helo=[mail.win.dtu.dk]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM5PR0401MB2497
+X-MS-Exchange-Organization-AuthSource: ait-pexedg02.win.dtu.dk
+X-MS-Exchange-Organization-AuthAs: Anonymous
+X-OriginatorOrg: win.dtu.dk
+X-MS-Exchange-Transport-EndToEndLatency: 00:00:01.9078161
+X-MS-Exchange-Processed-By-BccFoldering: 15.20.0239.001
+X-Microsoft-Exchange-Diagnostics:
+	1;DB6PR0401MB2504;27:BbBCRUXITzXPodY8G7MXe1DUkNTOlrvgn14WzcPj4I5ScHAn8XHIIK3ioRJ4J5Whuhsl9Kc67ZrX8jVX4AibUDLx+gu27E+T87TpBbh5xvUQS4OdrssC+0A2zrPJTP4x
+X-Microsoft-Antispam-Mailbox-Delivery:
+	ex:0;auth:0;dest:I;ENG:(400001000128)(400125000095)(20160514016)(750103)(520011016)(400001001318)(400125100095)(61617190)(400001002128)(400125200095);
+MIME-Version: 1.0
+
+Hi Jakob,
+
+the reason is that those multiprocessing and joblib are python packages and are not available as module in our system.
+By the way, to see the list of available modules, use the command 
+module avail
+
+You should first choose the python versione that you need:
+module avail python
+-------------------- /apps/dcc/etc/ModulesSL64/modulefiles ---------------------
+python/2.6.8          python/2.7.3(default) python3/3.5.1
+python/2.7.12_ucs4    python3/3.2.5         python3/3.6.0
+python/2.7.13         python3/3.3.0
+python/2.7.13_ucs4    python3/3.4.1
+
+load the version that you need, for example
+module load python/2.7.3
+
+Then you can install the packages that you need
+pip install --user multiprocessing
+pip install --user joblib
+
+This should install the packages in your home directory, and therefore does not require any special
+system privileges.
+
+The you can try to use them, on a single node.
+
+Best regards
+
+Andrea
+
+
+
+> I would like to do multithreaded and/or multi CPU processing on the
+> HPC using Python.
+> 
+> I have previously used the multiprocessing and joblib libraries for
+> Python for this purpose, however not on the HPC.
+> 
+> Doing
+> 
+> module load multiprocessing
+> module load joblib
+> 
+> both return
+> 
+> ModuleCmd_Load.c(204):ERROR:105: Unable to locate a modulefile for
+> 'multiprocessing'
+> ~/Documents/masters/evostrat/hpc/test
+> 
+> so I figure something is wrong.
+> 
+> How can I execute Python code that runs on multiple threads or CPUs on
+> the HPC? I.e. I would like to submit a single job with a single Python
+> script that requires multiprocessing.
+> 
+> Thanks in advance,
+> 
+> Jakob D. Havtorn
+
+
+

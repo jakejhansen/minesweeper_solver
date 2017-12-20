@@ -1,0 +1,96 @@
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+dense_1 (Dense)              (None, 1, 360)            26280     
+_________________________________________________________________
+dense_2 (Dense)              (None, 1, 250)            90250     
+_________________________________________________________________
+dense_3 (Dense)              (None, 1, 250)            62750     
+_________________________________________________________________
+dense_4 (Dense)              (None, 1, 250)            62750     
+_________________________________________________________________
+dense_5 (Dense)              (None, 1, 250)            62750     
+_________________________________________________________________
+dense_6 (Dense)              (None, 1, 36)             9036      
+=================================================================
+Total params: 313,816
+Trainable params: 313,816
+Non-trainable params: 0
+_________________________________________________________________
+Failed to load checkpoint
+Generation      0 | Steps       2428 | Test reward    -6.9 | Mean pop reward    -7.1 | Time  221.01 seconds
+Generation    100 | Steps     211468 | Test reward    -5.3 | Mean pop reward    -5.4 | Time  540.29 seconds
+Generation    200 | Steps     409031 | Test reward    -5.7 | Mean pop reward    -5.9 | Time  855.84 seconds
+Generation    300 | Steps     599590 | Test reward    -4.6 | Mean pop reward    -5.5 | Time 1173.89 seconds
+Generation    400 | Steps     789348 | Test reward    -5.7 | Mean pop reward    -5.0 | Time 1492.56 seconds
+Generation    500 | Steps     973322 | Test reward    -3.9 | Mean pop reward    -5.9 | Time 1808.48 seconds
+Generation    600 | Steps    1158212 | Test reward    -3.7 | Mean pop reward    -5.5 | Time 2125.83 seconds
+Generation    700 | Steps    1339966 | Test reward    -5.4 | Mean pop reward    -4.5 | Time 2441.32 seconds
+Generation    800 | Steps    1512861 | Test reward    -6.1 | Mean pop reward    -5.4 | Time 2758.55 seconds
+Generation    900 | Steps    1694694 | Test reward    -3.7 | Mean pop reward    -4.2 | Time 3072.89 seconds
+Generation   1000 | Steps    1878321 | Test reward    -4.8 | Mean pop reward    -5.1 | Time 3387.33 seconds
+Generation   1100 | Steps    2062376 | Test reward    -4.5 | Mean pop reward    -5.8 | Time 3704.29 seconds
+Generation   1200 | Steps    2237529 | Test reward    -6.2 | Mean pop reward    -5.2 | Time 4023.29 seconds
+Generation   1300 | Steps    2405309 | Test reward    -2.2 | Mean pop reward    -4.5 | Time 4343.59 seconds
+Generation   1400 | Steps    2572630 | Test reward    -6.5 | Mean pop reward    -4.8 | Time 4657.50 seconds
+Generation   1500 | Steps    2742739 | Test reward    -4.1 | Mean pop reward    -5.4 | Time 4972.03 seconds
+Generation   1600 | Steps    2906414 | Test reward    -4.4 | Mean pop reward    -4.7 | Time 5284.28 seconds
+Generation   1700 | Steps    3075909 | Test reward    -6.3 | Mean pop reward    -4.9 | Time 5596.61 seconds
+Generation   1800 | Steps    3240041 | Test reward    -3.7 | Mean pop reward    -4.2 | Time 5911.45 seconds
+Generation   1900 | Steps    3403064 | Test reward    -3.3 | Mean pop reward    -4.3 | Time 6225.13 seconds
+Generation   2000 | Steps    3567150 | Test reward    -4.0 | Mean pop reward    -4.3 | Time 6538.31 seconds
+Generation   2100 | Steps    3737104 | Test reward    -2.9 | Mean pop reward    -4.2 | Time 6852.92 seconds
+Generation   2200 | Steps    3898980 | Test reward    -4.9 | Mean pop reward    -4.1 | Time 7167.06 seconds
+Generation   2300 | Steps    4058573 | Test reward    -4.4 | Mean pop reward    -4.3 | Time 7483.86 seconds
+Generation   2400 | Steps    4211289 | Test reward    -3.4 | Mean pop reward    -4.6 | Time 7798.39 seconds
+Generation   2500 | Steps    4369588 | Test reward    -3.4 | Mean pop reward    -4.6 | Time 8116.32 seconds
+Generation   2600 | Steps    4528992 | Test reward    -3.9 | Mean pop reward    -4.5 | Time 8433.48 seconds
+Generation   2700 | Steps    4688046 | Test reward    -5.0 | Mean pop reward    -4.3 | Time 8749.68 seconds
+Generation   2800 | Steps    4844018 | Test reward    -3.9 | Mean pop reward    -4.9 | Time 9063.95 seconds
+Generation   2900 | Steps    4997030 | Test reward    -3.9 | Mean pop reward    -4.1 | Time 9377.27 seconds
+Generation   3000 | Steps    5148547 | Test reward    -5.8 | Mean pop reward    -4.8 | Time 9693.33 seconds
+Generation   3100 | Steps    5299405 | Test reward    -3.9 | Mean pop reward    -3.8 | Time 10009.12 seconds
+Generation   3200 | Steps    5455193 | Test reward    -5.8 | Mean pop reward    -4.1 | Time 10323.01 seconds
+Generation   3300 | Steps    5607810 | Test reward    -3.8 | Mean pop reward    -4.7 | Time 10635.32 seconds
+Generation   3400 | Steps    5766290 | Test reward    -4.4 | Mean pop reward    -4.3 | Time 10952.05 seconds
+Generation   3500 | Steps    5917594 | Test reward    -3.5 | Mean pop reward    -4.0 | Time 11288.48 seconds
+Generation   3600 | Steps    6067512 | Test reward    -4.5 | Mean pop reward    -4.5 | Time 11603.15 seconds
+Generation   3700 | Steps    6215463 | Test reward    -4.6 | Mean pop reward    -3.5 | Time 11919.44 seconds
+Generation   3800 | Steps    6360385 | Test reward    -4.7 | Mean pop reward    -3.9 | Time 12234.52 seconds
+Generation   3900 | Steps    6505753 | Test reward    -5.9 | Mean pop reward    -4.0 | Time 12546.68 seconds
+Generation   4000 | Steps    6652274 | Test reward    -3.5 | Mean pop reward    -4.3 | Time 12858.80 seconds
+Generation   4100 | Steps    6799607 | Test reward    -5.8 | Mean pop reward    -4.0 | Time 13176.27 seconds
+Generation   4200 | Steps    6954234 | Test reward    -5.2 | Mean pop reward    -4.3 | Time 13489.12 seconds
+Generation   4300 | Steps    7111068 | Test reward    -3.2 | Mean pop reward    -4.0 | Time 13797.52 seconds
+Generation   4400 | Steps    7265151 | Test reward    -1.3 | Mean pop reward    -4.8 | Time 14108.22 seconds
+Generation   4500 | Steps    7415265 | Test reward    -5.5 | Mean pop reward    -4.0 | Time 14419.49 seconds
+Generation   4600 | Steps    7574096 | Test reward    -5.3 | Mean pop reward    -4.2 | Time 14729.53 seconds
+Generation   4700 | Steps    7732658 | Test reward    -3.5 | Mean pop reward    -4.3 | Time 15042.20 seconds
+Generation   4800 | Steps    7889450 | Test reward    -4.5 | Mean pop reward    -4.5 | Time 15353.34 seconds
+Generation   4900 | Steps    8043994 | Test reward    -3.5 | Mean pop reward    -4.3 | Time 15663.37 seconds
+Generation   5000 | Steps    8188112 | Test reward    -3.9 | Mean pop reward    -3.9 | Time 15974.78 seconds
+Generation   5100 | Steps    8335279 | Test reward    -3.3 | Mean pop reward    -3.7 | Time 16288.55 seconds
+Generation   5200 | Steps    8473891 | Test reward    -1.4 | Mean pop reward    -3.8 | Time 16598.35 seconds
+Generation   5300 | Steps    8615334 | Test reward    -4.3 | Mean pop reward    -3.7 | Time 16910.57 seconds
+Generation   5400 | Steps    8760531 | Test reward    -3.4 | Mean pop reward    -4.1 | Time 17221.24 seconds
+Generation   5500 | Steps    8918236 | Test reward    -1.7 | Mean pop reward    -4.9 | Time 17531.53 seconds
+Generation   5600 | Steps    9070055 | Test reward    -5.1 | Mean pop reward    -4.3 | Time 17844.22 seconds
+Generation   5700 | Steps    9222790 | Test reward    -4.6 | Mean pop reward    -4.8 | Time 18159.77 seconds
+Generation   5800 | Steps    9382126 | Test reward    -4.6 | Mean pop reward    -4.4 | Time 18471.36 seconds
+Generation   5900 | Steps    9546304 | Test reward    -6.7 | Mean pop reward    -4.5 | Time 18780.83 seconds
+Generation   6000 | Steps    9714951 | Test reward    -5.9 | Mean pop reward    -5.1 | Time 19091.47 seconds
+Generation   6100 | Steps    9873925 | Test reward    -6.2 | Mean pop reward    -4.6 | Time 19402.46 seconds
+Generation   6200 | Steps   10032354 | Test reward    -5.3 | Mean pop reward    -4.3 | Time 19714.73 seconds
+Generation   6300 | Steps   10195922 | Test reward    -3.0 | Mean pop reward    -4.1 | Time 20024.95 seconds
+Generation   6400 | Steps   10358683 | Test reward    -3.7 | Mean pop reward    -4.5 | Time 20333.05 seconds
+Generation   6500 | Steps   10518875 | Test reward    -1.8 | Mean pop reward    -4.6 | Time 20644.59 seconds
+Generation   6600 | Steps   10675033 | Test reward    -6.2 | Mean pop reward    -4.7 | Time 20957.06 seconds
+Generation   6700 | Steps   10831245 | Test reward    -2.6 | Mean pop reward    -4.7 | Time 21268.51 seconds
+Generation   6800 | Steps   10986388 | Test reward    -2.2 | Mean pop reward    -4.3 | Time 21580.09 seconds
+Generation   6900 | Steps   11142830 | Test reward    -4.5 | Mean pop reward    -4.5 | Time 21890.39 seconds
+Generation   7000 | Steps   11302718 | Test reward    -4.3 | Mean pop reward    -3.7 | Time 22200.41 seconds
+Generation   7100 | Steps   11470377 | Test reward    -3.4 | Mean pop reward    -5.0 | Time 22515.13 seconds
+Generation   7200 | Steps   11634474 | Test reward    -4.2 | Mean pop reward    -4.8 | Time 22826.99 seconds
+Generation   7300 | Steps   11794238 | Test reward    -3.4 | Mean pop reward    -4.3 | Time 23141.99 seconds
+Generation   7400 | Steps   11948639 | Test reward    -5.3 | Mean pop reward    -5.1 | Time 23466.47 seconds
+Generation   7500 | Steps   12101265 | Test reward    -4.9 | Mean pop reward    -4.4 | Time 23779.23 seconds

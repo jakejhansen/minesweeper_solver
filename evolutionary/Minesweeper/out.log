@@ -1,0 +1,14 @@
+population    : 20                                                              
+workers       : 1                                                               
+save_dir      : /Users/Jakob/Desktop/minesweeper_solver/evolutionary/Minesweeper
+learning_rate : 0.01                                                            
+sigma         : 0.1                                                             
+reg           : {'L2': 0.001}                                                   
+
+population    : 20                                                              
+workers       : 1                                                               
+save_dir      : /Users/Jakob/Desktop/minesweeper_solver/evolutionary/Minesweeper
+learning_rate : 0.01                                                            
+sigma         : 0.1                                                             
+reg           : {'L2': 0.001}                                                   
+

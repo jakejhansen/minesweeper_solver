@@ -1,0 +1,31 @@
+population    : 30                                                              
+workers       : 4                                                               
+save_dir      : /Users/Jakob/Desktop/minesweeper_solver/evolutionary/CartPole-v1
+learning_rate : 0.03                                                            
+sigma         : 0.1                                                             
+reg           : {'L2': 0.0}                                                     
+
+Generation      0 | Steps        932 | Test reward    26.8 | Mean pop reward    15.5 | Time    3.48 seconds
+Generation     10 | Steps      16378 | Test reward    88.8 | Mean pop reward    38.4 | Time   24.19 seconds
+Generation     20 | Steps      61117 | Test reward    72.8 | Mean pop reward    83.9 | Time   54.93 seconds
+Generation     30 | Steps     152585 | Test reward   273.4 | Mean pop reward   165.2 | Time   93.15 seconds
+Generation     40 | Steps     276960 | Test reward   227.4 | Mean pop reward   166.9 | Time  130.72 seconds
+Generation     50 | Steps     430453 | Test reward   265.8 | Mean pop reward   252.9 | Time  166.33 seconds
+Generation     60 | Steps     616063 | Test reward   375.0 | Mean pop reward   377.2 | Time  210.93 seconds
+Generation     70 | Steps     839113 | Test reward   301.1 | Mean pop reward   341.8 | Time  270.91 seconds
+Generation     80 | Steps    1056026 | Test reward   339.0 | Mean pop reward   442.0 | Time  320.59 seconds
+Generation     90 | Steps    1280480 | Test reward   365.2 | Mean pop reward   427.1 | Time  365.76 seconds
+Generation    100 | Steps    1517869 | Test reward   399.1 | Mean pop reward   389.0 | Time  417.07 seconds
+Generation    110 | Steps    1755348 | Test reward   392.0 | Mean pop reward   402.2 | Time  461.41 seconds
+Generation    120 | Steps    2003741 | Test reward   408.3 | Mean pop reward   406.8 | Time  509.14 seconds
+Generation    130 | Steps    2255412 | Test reward   421.4 | Mean pop reward   445.8 | Time  566.86 seconds
+Generation    140 | Steps    2510028 | Test reward   441.1 | Mean pop reward   408.8 | Time  615.91 seconds
+Generation    150 | Steps    2769108 | Test reward   437.6 | Mean pop reward   426.7 | Time  658.22 seconds
+Generation    160 | Steps    3030455 | Test reward   418.2 | Mean pop reward   451.2 | Time  700.75 seconds
+Generation    170 | Steps    3305834 | Test reward   449.0 | Mean pop reward   469.2 | Time  746.62 seconds
+Generation    180 | Steps    3570414 | Test reward   452.1 | Mean pop reward   465.2 | Time  808.63 seconds
+Generation    190 | Steps    3838930 | Test reward   451.8 | Mean pop reward   471.4 | Time  865.97 seconds
+Generation    200 | Steps    4096252 | Test reward   403.9 | Mean pop reward   456.9 | Time  918.12 seconds
+Generation    210 | Steps    4359271 | Test reward   454.1 | Mean pop reward   465.5 | Time  970.56 seconds
+Generation    220 | Steps    4625618 | Test reward   457.4 | Mean pop reward   399.0 | Time 1014.26 seconds
+Generation    230 | Steps    4896123 | Test reward   439.6 | Mean pop reward   490.3 | Time 1058.51 seconds

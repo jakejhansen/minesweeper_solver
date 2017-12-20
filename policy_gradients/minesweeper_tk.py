@@ -97,8 +97,6 @@ class Minesweeper(object):
                         c2 = "#FF0000"
 
 
-                    #num = np.random.randint(len(font.families()))
-                    #print("({},{}) : {}".format(row,col,num))
                     f = self.C.create_text(col*self.SIZEOFSQ + int(0.5*self.SIZEOFSQ),row*self.SIZEOFSQ + int(0.5*self.SIZEOFSQ), \
                         font=('Nimbus Sans L', 24, "bold"), fill = c2) #101 pretty good font
                     self.C.itemconfigure(f, text=str(cell))
@@ -262,9 +260,6 @@ class Minesweeper(object):
         #Get the reward for the given action
         reward = self.compute_reward(a)
 
-        #if reward == self.rewards['noprogress']:
-        #    self.lost += 1
-        #    return({"s" : np.copy(self.state), "r" : self.rewards['loss'], "d" : True})
 
         #return the state and the reward
         return({"s" : np.copy(self.state), "r" : reward, "d" : False})
@@ -379,10 +374,12 @@ class Minesweeper(object):
             d["s"] = np.reshape(self.stateConverter(d["s"]),(self.ROWS*self.COLS*2))
         elif self.OUT == "FULL":
             d["s"] = np.reshape(self.stateConverter(d["s"]),(self.ROWS*self.COLS*10))
+
         return d["s"], d["r"], d["d"], None
 
     def reset(self):
         self.initGame()
+
         if self.OUT == "CONDENSED":
             return np.reshape(self.stateConverter(self.state),(self.ROWS*self.COLS*2))
         elif self.OUT =="FULL":
@@ -398,7 +395,6 @@ if __name__ == "__main__":
     game.printState()
 
     i = 0
-    #start = time.time()
     while True:
         inp = input("Enter input (ROW,COL)")
         if inp == 'bb':
@@ -412,17 +408,4 @@ if __name__ == "__main__":
         if v["d"]:
             game.reset()
 
-        """
-        #Test how fast it can run:
-        i += 1
-        print(i)
-        act = [np.random.randint(0,10), np.random.randint(0,10)]
-        env = game.action(act[0],act[1])
-        state = stateConverter(env['state'])
-        reward = env['reward']
-        if i >= 1000:
-            break
-        """
-
-    #print("Took: " + str(time.time()-start))
 

@@ -1,0 +1,112 @@
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+dense_1 (Dense)              (None, 1, 360)            129960    
+_________________________________________________________________
+dense_2 (Dense)              (None, 1, 200)            72200     
+_________________________________________________________________
+dense_3 (Dense)              (None, 1, 200)            40200     
+_________________________________________________________________
+dense_4 (Dense)              (None, 1, 200)            40200     
+_________________________________________________________________
+dense_5 (Dense)              (None, 1, 200)            40200     
+_________________________________________________________________
+dense_6 (Dense)              (None, 1, 36)             7236      
+=================================================================
+Total params: 329,996
+Trainable params: 329,996
+Non-trainable params: 0
+_________________________________________________________________
+Failed to load checkpoint
+Generation      0 | Test reward    -8.6 | Mean pop reward    -6.7 | Time   65.64 seconds
+Generation    100 | Test reward    -6.4 | Mean pop reward    -6.3 | Time  481.32 seconds
+Generation    200 | Test reward    -5.3 | Mean pop reward    -6.4 | Time  886.12 seconds
+Generation    300 | Test reward    -8.6 | Mean pop reward    -7.6 | Time 1295.64 seconds
+Generation    400 | Test reward    -5.4 | Mean pop reward    -6.7 | Time 1707.82 seconds
+Generation    500 | Test reward    -6.2 | Mean pop reward    -6.0 | Time 2115.88 seconds
+Generation    600 | Test reward    -7.0 | Mean pop reward    -6.3 | Time 2519.07 seconds
+Generation    700 | Test reward    -7.0 | Mean pop reward    -5.9 | Time 2927.94 seconds
+Generation    800 | Test reward    -5.4 | Mean pop reward    -6.5 | Time 3332.20 seconds
+Generation    900 | Test reward    -6.8 | Mean pop reward    -6.7 | Time 3739.63 seconds
+Generation   1000 | Test reward    -5.5 | Mean pop reward    -6.8 | Time 4149.33 seconds
+Generation   1100 | Test reward    -6.7 | Mean pop reward    -5.6 | Time 4543.84 seconds
+Generation   1200 | Test reward    -7.8 | Mean pop reward    -5.9 | Time 4934.24 seconds
+Generation   1300 | Test reward    -4.7 | Mean pop reward    -5.5 | Time 5323.04 seconds
+Generation   1400 | Test reward    -3.7 | Mean pop reward    -6.7 | Time 5714.59 seconds
+Generation   1500 | Test reward    -5.8 | Mean pop reward    -6.1 | Time 6103.24 seconds
+Generation   1600 | Test reward    -6.5 | Mean pop reward    -5.8 | Time 6492.10 seconds
+Generation   1700 | Test reward    -6.6 | Mean pop reward    -6.6 | Time 6882.94 seconds
+Generation   1800 | Test reward    -6.9 | Mean pop reward    -7.0 | Time 7274.00 seconds
+Generation   1900 | Test reward    -7.8 | Mean pop reward    -6.9 | Time 7665.38 seconds
+Generation   2000 | Test reward    -7.0 | Mean pop reward    -7.1 | Time 8059.36 seconds
+Generation   2100 | Test reward    -6.0 | Mean pop reward    -7.2 | Time 8452.78 seconds
+Generation   2200 | Test reward    -4.7 | Mean pop reward    -5.6 | Time 8841.22 seconds
+Generation   2300 | Test reward    -5.3 | Mean pop reward    -7.0 | Time 9230.86 seconds
+Generation   2400 | Test reward    -7.0 | Mean pop reward    -6.7 | Time 9619.28 seconds
+Generation   2500 | Test reward    -6.0 | Mean pop reward    -6.6 | Time 10007.67 seconds
+Generation   2600 | Test reward    -6.2 | Mean pop reward    -6.1 | Time 10400.74 seconds
+Generation   2700 | Test reward    -6.7 | Mean pop reward    -6.7 | Time 10795.14 seconds
+Generation   2800 | Test reward    -5.3 | Mean pop reward    -6.8 | Time 11188.53 seconds
+Generation   2900 | Test reward    -7.0 | Mean pop reward    -6.2 | Time 11580.39 seconds
+Generation   3000 | Test reward    -6.3 | Mean pop reward    -6.5 | Time 11973.46 seconds
+Generation   3100 | Test reward    -6.7 | Mean pop reward    -6.6 | Time 12374.74 seconds
+Generation   3200 | Test reward    -8.5 | Mean pop reward    -6.4 | Time 12772.61 seconds
+Generation   3300 | Test reward    -5.0 | Mean pop reward    -6.1 | Time 13171.11 seconds
+Generation   3400 | Test reward    -6.8 | Mean pop reward    -5.8 | Time 13571.11 seconds
+Generation   3500 | Test reward    -7.0 | Mean pop reward    -6.3 | Time 13973.68 seconds
+Generation   3600 | Test reward    -4.6 | Mean pop reward    -6.3 | Time 14374.78 seconds
+Generation   3700 | Test reward    -6.0 | Mean pop reward    -6.4 | Time 14772.25 seconds
+Generation   3800 | Test reward    -4.5 | Mean pop reward    -6.3 | Time 15172.13 seconds
+Generation   3900 | Test reward    -7.6 | Mean pop reward    -5.6 | Time 15573.47 seconds
+Generation   4000 | Test reward    -5.2 | Mean pop reward    -5.4 | Time 15969.03 seconds
+Generation   4100 | Test reward    -5.2 | Mean pop reward    -5.9 | Time 16375.56 seconds
+Generation   4200 | Test reward    -4.9 | Mean pop reward    -6.0 | Time 16781.79 seconds
+Generation   4300 | Test reward    -7.2 | Mean pop reward    -5.8 | Time 17196.17 seconds
+Generation   4400 | Test reward    -6.0 | Mean pop reward    -5.4 | Time 17600.42 seconds
+Generation   4500 | Test reward    -3.2 | Mean pop reward    -5.9 | Time 18008.48 seconds
+Generation   4600 | Test reward    -3.8 | Mean pop reward    -5.7 | Time 18416.93 seconds
+Generation   4700 | Test reward    -7.6 | Mean pop reward    -6.6 | Time 18823.59 seconds
+Generation   4800 | Test reward    -6.2 | Mean pop reward    -5.6 | Time 19229.93 seconds
+Generation   4900 | Test reward    -6.2 | Mean pop reward    -6.4 | Time 19634.62 seconds
+Generation   5000 | Test reward    -5.8 | Mean pop reward    -6.0 | Time 20031.20 seconds
+Generation   5100 | Test reward    -5.4 | Mean pop reward    -5.8 | Time 20438.96 seconds
+Generation   5200 | Test reward    -5.4 | Mean pop reward    -6.2 | Time 20843.52 seconds
+Generation   5300 | Test reward    -5.8 | Mean pop reward    -5.9 | Time 21242.14 seconds
+Generation   5400 | Test reward    -5.7 | Mean pop reward    -6.0 | Time 21647.42 seconds
+Generation   5500 | Test reward    -6.9 | Mean pop reward    -6.3 | Time 22053.96 seconds
+Generation   5600 | Test reward    -7.6 | Mean pop reward    -6.6 | Time 22453.87 seconds
+Generation   5700 | Test reward    -7.0 | Mean pop reward    -6.6 | Time 22855.40 seconds
+Generation   5800 | Test reward    -7.7 | Mean pop reward    -6.6 | Time 23251.23 seconds
+Generation   5900 | Test reward    -7.3 | Mean pop reward    -6.6 | Time 23647.49 seconds
+Generation   6000 | Test reward    -6.2 | Mean pop reward    -6.4 | Time 24052.07 seconds
+Generation   6100 | Test reward    -5.1 | Mean pop reward    -6.2 | Time 24458.18 seconds
+Generation   6200 | Test reward    -6.8 | Mean pop reward    -6.4 | Time 24858.62 seconds
+Generation   6300 | Test reward    -4.0 | Mean pop reward    -6.2 | Time 25258.42 seconds
+Generation   6400 | Test reward    -4.6 | Mean pop reward    -6.6 | Time 25661.86 seconds
+Generation   6500 | Test reward    -7.0 | Mean pop reward    -6.2 | Time 26064.81 seconds
+Generation   6600 | Test reward    -7.2 | Mean pop reward    -6.8 | Time 26469.49 seconds
+Generation   6700 | Test reward    -5.3 | Mean pop reward    -6.5 | Time 26882.79 seconds
+Generation   6800 | Test reward    -6.8 | Mean pop reward    -6.1 | Time 27301.87 seconds
+Generation   6900 | Test reward    -4.1 | Mean pop reward    -6.5 | Time 27706.06 seconds
+Generation   7000 | Test reward    -5.4 | Mean pop reward    -5.3 | Time 28107.65 seconds
+Generation   7100 | Test reward    -7.6 | Mean pop reward    -6.1 | Time 28508.93 seconds
+Generation   7200 | Test reward    -4.4 | Mean pop reward    -6.0 | Time 28916.05 seconds
+Generation   7300 | Test reward    -7.0 | Mean pop reward    -7.0 | Time 29317.19 seconds
+Generation   7400 | Test reward    -6.6 | Mean pop reward    -6.2 | Time 29720.44 seconds
+Generation   7500 | Test reward    -5.3 | Mean pop reward    -6.1 | Time 30124.57 seconds
+Generation   7600 | Test reward    -4.6 | Mean pop reward    -6.8 | Time 30525.67 seconds
+Generation   7700 | Test reward    -6.2 | Mean pop reward    -6.1 | Time 30934.28 seconds
+Generation   7800 | Test reward    -4.6 | Mean pop reward    -6.6 | Time 31339.55 seconds
+Generation   7900 | Test reward    -5.5 | Mean pop reward    -5.6 | Time 31741.05 seconds
+Generation   8000 | Test reward    -6.2 | Mean pop reward    -6.3 | Time 32152.98 seconds
+Generation   8100 | Test reward    -6.1 | Mean pop reward    -5.9 | Time 32552.62 seconds
+Generation   8200 | Test reward    -5.5 | Mean pop reward    -6.4 | Time 32951.99 seconds
+Generation   8300 | Test reward    -4.9 | Mean pop reward    -6.5 | Time 33354.00 seconds
+Generation   8400 | Test reward    -5.2 | Mean pop reward    -6.5 | Time 33756.37 seconds
+Generation   8500 | Test reward    -5.3 | Mean pop reward    -6.6 | Time 34153.05 seconds
+Generation   8600 | Test reward    -6.9 | Mean pop reward    -6.0 | Time 34556.01 seconds
+Generation   8700 | Test reward    -6.4 | Mean pop reward    -6.7 | Time 34955.61 seconds
+Generation   8800 | Test reward    -7.7 | Mean pop reward    -5.8 | Time 35356.35 seconds
+Generation   8900 | Test reward    -5.3 | Mean pop reward    -6.3 | Time 35756.95 seconds
+Generation   9000 | Test reward    -5.2 | Mean pop reward    -7.2 | Time 36155.24 seconds
+Generation   9100 | Test reward    -7.4 | Mean pop reward    -6.8 | Time 36557.29 seconds

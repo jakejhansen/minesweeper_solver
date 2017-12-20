@@ -1,0 +1,393 @@
+Received: from AM5PR0401MB2499.eurprd04.prod.outlook.com (10.169.244.143) by
+ DB6PR0401MB2504.eurprd04.prod.outlook.com (10.169.224.143) with Microsoft
+ SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P256) id 15.20.239.5 via Mailbox
+ Transport; Sat, 18 Nov 2017 16:53:51 +0000
+Received: from AM3PR04CA0098.eurprd04.prod.outlook.com
+ (2a01:111:e400:5366::24) by AM5PR0401MB2499.eurprd04.prod.outlook.com
+ (2603:10a6:203:36::15) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P256) id 15.20.239.5; Sat, 18
+ Nov 2017 16:53:50 +0000
+Received: from DB5EUR01FT020.eop-EUR01.prod.protection.outlook.com
+ (2a01:111:f400:7e02::205) by AM3PR04CA0098.outlook.office365.com
+ (2a01:111:e400:5366::24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.239.5 via Frontend
+ Transport; Sat, 18 Nov 2017 16:53:50 +0000
+Authentication-Results: spf=none (sender IP is 192.38.82.195)
+ smtp.mailfrom=cc.dtu.dk; dtudk.mail.onmicrosoft.com; dkim=none (message not
+ signed) header.d=none;dtudk.mail.onmicrosoft.com; dmarc=none action=none
+ header.from=cc.dtu.dk;
+Received-SPF: None (protection.outlook.com: cc.dtu.dk does not designate
+ permitted sender hosts)
+Received: from mail.win.dtu.dk (192.38.82.195) by
+ DB5EUR01FT020.mail.protection.outlook.com (10.152.4.247) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.20.218.12 via Frontend Transport; Sat, 18 Nov 2017 16:53:50 +0000
+Received: from ait-pexdark02.win.dtu.dk (192.38.82.203) by
+ ait-pexsrv02.win.dtu.dk (192.38.82.195) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1034.26; Sat, 18 Nov 2017 17:53:46 +0100
+Received: from ait-pexedg02.win.dtu.dk (192.38.82.192) by
+ ait-pexdark02.win.dtu.dk (192.38.82.203) with Microsoft SMTP Server
+ (version=TLS1_0, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA_P256) id
+ 15.1.1034.26 via Frontend Transport; Sat, 18 Nov 2017 17:53:46 +0100
+Received: from spamfilter4.dtu.dk (192.38.80.33) by ait-pexedg02.win.dtu.dk
+ (192.38.82.192) with Microsoft SMTP Server (TLS) id 14.3.361.1; Sat, 18 Nov
+ 2017 17:53:36 +0100
+Received: from mail1.cc.dtu.dk (mail.cc.dtu.dk [130.225.82.7])	by
+ spamfilter4.dtu.dk  with ESMTP id vAIGrYgx007353-vAIGrYh0007353	for
+ <s132315@student.dtu.dk>; Sat, 18 Nov 2017 17:53:34 +0100
+Received: by mail1.cc.dtu.dk (Postfix, from userid 106)	id B97A119E872; Sat,
+ 18 Nov 2017 17:53:34 +0100 (CET)
+X-Spam-Checker-Version: SpamAssassin 3.3.2 (2011-06-06) on mail1.cc.dtu.dk
+X-Spam-Level:
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00 autolearn=ham
+	version=3.3.2
+Received: from rt4.cc.dtu.dk (rt4.cc.dtu.dk [130.225.82.160])	by
+ mail1.cc.dtu.dk (Postfix) with ESMTP id 56D1C19E871	for
+ <s132315@student.dtu.dk>; Sat, 18 Nov 2017 17:53:33 +0100 (CET)
+Received: by rt4.cc.dtu.dk (Postfix, from userid 48)	id 4E2A681B92; Sat, 18
+ Nov 2017 17:53:33 +0100 (CET)
+Subject: Re: [[DCC Support] #15729] Multiprocessing in Python
+From: Sebastian Borchert via RT <support@cc.dtu.dk>
+Reply-To: <support@cc.dtu.dk>
+In-Reply-To: <3ed21082647c1934db9fd7f410f5f0e7@mail.cc.dtu.dk>
+References: <RT-Ticket-15729@itsupport.student.dtu.dk>
+ <7074BA49-727E-407C-BF59-858A7883ADDB@win.dtu.dk>
+ <rt-4.2.10-2552-1510851688-444.15729-6-0@itsupport.student.dtu.dk>
+ <781E6312-47C5-4556-820F-970F192C1158@win.dtu.dk>
+ <rt-4.2.10-15770-1511018567-1375.15729-5-0@itsupport.student.dtu.dk>
+ <c77e700275151fa972b1753a0f034a7c@mail.cc.dtu.dk>
+ <rt-4.2.10-15896-1511020247-1444.15729-6-0@itsupport.student.dtu.dk>
+ <637B9239-90BF-411D-991A-0D15300E9D3C@win.dtu.dk>
+ <rt-4.2.10-15770-1511022811-1812.15729-5-0@itsupport.student.dtu.dk>
+ <3ed21082647c1934db9fd7f410f5f0e7@mail.cc.dtu.dk>
+Message-ID: <rt-4.2.10-15896-1511024012-486.15729-6-0@itsupport.student.dtu.dk>
+X-RT-Loop-Prevention: DTU Databar Service Desk
+X-RT-Ticket: DTU Databar Service Desk #15729
+X-Managed-BY: RT 4.2.10 (http://www.bestpractical.com/rt/)
+X-RT-Originator: sebo@cc.dtu.dk
+To: <s132315@student.dtu.dk>
+Content-Type: text/plain; charset="utf-8"
+X-RT-Original-Encoding: utf-8
+Precedence: bulk
+Date: Sat, 18 Nov 2017 17:53:33 +0100
+Content-Transfer-Encoding: 8bit
+X-FEAS-SYSTEM-WL: 130.225.82.7
+Return-Path: apache@cc.dtu.dk
+X-OrganizationHeadersPreserved: ait-pexsrv02.win.dtu.dk
+X-MS-Exchange-Organization-Network-Message-Id: 40652b74-c1a1-4501-fe93-08d52ea4f1ac
+X-EOPAttributedMessage: 0
+X-MS-Exchange-Organization-MessageDirectionality: Originating
+X-Forefront-Antispam-Report: CIP:192.38.82.195;IPV:NLI;CTRY:DK;EFV:NLI;SFV:NSPM;SFS:(6009001)(2980300002)(428002)(3190300001)(40764003)(189002)(51874003)(199003)(43784003)(8936002)(1096003)(50466002)(33646002)(90966002)(93886005)(8676002)(229853002)(42186006)(45336002)(2950100002)(6916009)(46386002)(103686004)(23676003)(42882006)(74482002)(43066004)(79362002)(101416001)(50986999)(76176999)(54356999)(5660300001)(2870700001)(105586002)(189998001)(3450700001)(356003)(6266002)(106466001)(47776003)(6246003)(305945005)(9686003)(52956003)(2351001)(246002)(102196002)(19627235001);DIR:INB;SFP:;SCL:1;SRVR:AM5PR0401MB2499;H:mail.win.dtu.dk;FPR:;SPF:None;PTR:ait-pexsrv02.win.dtu.dk;MX:1;A:0;LANG:en;
+X-Microsoft-Exchange-Diagnostics: 1;DB5EUR01FT020;1:BRfFbaTO7e0l1IyCh4ghBIpbNDnxbH4mAxgWhZMGt0eNqo/UIEtkfeJBLwxSgH7Mb8US5eOdkZTZWnX9X/lfqi0Z5+2L7HCfDzNk6bBS0L6/wl+0Y2sw9Id4qoLlyZwO
+X-CrossPremisesHeadersPromoted: DB5EUR01FT020.eop-EUR01.prod.protection.outlook.com
+X-CrossPremisesHeadersFiltered: DB5EUR01FT020.eop-EUR01.prod.protection.outlook.com
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 40652b74-c1a1-4501-fe93-08d52ea4f1ac
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(22001)(4534020)(4602075)(4627115)(201703031133081)(2017052603199);SRVR:AM5PR0401MB2499;
+X-Microsoft-Exchange-Diagnostics: 1;AM5PR0401MB2499;3:dxbh68Ipvs0JYHlXMQ5C5Z+RrRTnfjpVhmOpEE6dvS+6G4Pin5y39aw9kF9T+r2ltxmw+BpPvQ96nGkaHRwr8h+jtDATGoIKV/AWteYvE27nMjTOQ5l3hvOjUTO+D9SVpX5bmYc8QenMnRHKpq7mymWBMgcjTY6LDMhXEuSPZ0R52SuLR/AGt/mGv+nJM1xR8SQ0jii04AXCeJ4GKQGJbVmJnyuJHtvIiZbnWJNV4wgAG82aDuMprp7d0ZG6iLs71s6HFDSEVWYslX8l8Kb1Y29W5LMTGMiJQlFv/Awsj3Sdvwhb5gjYGnqNkk5UUgItnBaZCWMs1FmABZvy90AKlGPHXig+4bUwEb0hlGNjYsE=;25:/86GQVN60LgkBlm7x1pc+gyLBGuGfAaOG+yvdJ+nXQozmYF8bD5/rxntEUylBWdT2WUpoPdCJLqcYSWCj2esyFh8aS55W0Ax5gbjHWlLjkLMZT/swoSi8j/86ul1DB0bU2zNiy2P4JNT3kDrzpnsPn/Bsj72ivYqASA3ouf6R/eMbI/G0kZsWlHchyOnR5Jr0+kJ4pKgDYepC4M8etVKvID/1kuA/xOoFNafS0NEl46oM+ttgRlp0aCbgoT8MGgIWOZ2m3FBJHICmtd4y8Y4TxszRvXrWob+KNA3GR9d6c0/2SLtVrRAo1wCRnMp2IHylzdXFuTY9wDAAZOGkzftHQ==
+X-MS-TrafficTypeDiagnostic: AM5PR0401MB2499:
+X-Microsoft-Exchange-Diagnostics: 1;AM5PR0401MB2499;31:heDF57ZZrH/QymfqysjFiDm0ITIFRqvLTBMRhFQSL6+CqlS1GdxuSrAT1dbfeP1g6l4fVLrwKyPvWBNPB0+ufvc8/5pmbHTbruZ0FLZAlz/Xs59CbcHDKO0Ht/MDinrZBcgo7MOnGMwvhRnXdSMgZufzWkkOzGAgGSbxD+ySLz2R1pXxwNDyQRZ6n7MfjlkshRYcTXjSejSAKgb6TAj1pu+qvThoE2h59QYWmgPGY/I=;4:DdQiO7224syNdTkQWBCW4mi+RuU1aXpcXRhNz3S9DZxkIxh+PqC4dBeRTNNiwnOB5HuFyuoCcDqQPW/usgyNFjwpCvr8n8UYL6v+/fsocdpYYjfbJGDCSQoggdLbkwRvnbhMlrQW8eWYzjqscn7Inun9aX4NWXO6Zz3U6/MHeCpR/ky2/1XIlFPHXWyH9GCN9eDQw3FLs23YjKhaCFIUf8BSCI8jXR4cet5AXHcsWdTpZ8WJYEnD5RMnjSBTCGbQZev+VCpoqJsedZYXuphf/hg4hDmwajeu6Pbuz1d4JxEoFhSXZO5+r7jBqKGRvmxf
+X-Exchange-Antispam-Report-Test: UriScan:(48706222282353);
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(100000700101)(100105000095)(100000701101)(100105300095)(100000702101)(100105100095)(2401047)(8121501046)(100000703101)(100105400095)(3002001)(93006095)(93003095)(10201501046)(3231022)(201708071742011)(100000704101)(100105200095)(100000705101)(100105500095);SRVR:AM5PR0401MB2499;BCL:0;PCL:0;RULEID:(100000800101)(100110000095)(100000801101)(100110300095)(100000802101)(100110100095)(100000803101)(100110400095)(100000804101)(100110200095)(100000805101)(100110500095);SRVR:AM5PR0401MB2499;
+X-MS-Exchange-Organization-SpamFilter-OverrideCategory: Default
+X-MS-Exchange-Organization-SCL: 1
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtBTTVQUjA0MDFNQjI0OTk7MjM6bUJ3a3g3MEtvTkVvclRaVmFJNzNOWnFl?=
+ =?utf-8?B?SHpkTElKMXBGaFJmZ01oSjAwQnJqM2pFdFZjanJoeFFFclc0dmpHL3I5cFZN?=
+ =?utf-8?B?MU5RUE53ejNKb2tNZFFndm54Z0hqaEE4ZWZGUmZOZHdObXdTT2lKM0dNNDhD?=
+ =?utf-8?B?RDZFS3BIQUtkaFZYZmg2YkFXQmZZMUQrTDQrOEtjaXNldXVUL2NycXVKQ2VO?=
+ =?utf-8?B?WUNKZnlhZ29NaDhWS1hlZHExVzVkVURrU3RCMkxGYWs4V3J1VXVuWVN4dXBD?=
+ =?utf-8?B?MGFRWTFzblJUS1NWNitXR2k3dmdzVEpwSjZqbHlROW45OVo3YVVUUFMzbTdC?=
+ =?utf-8?B?ZEdlUDdEMzNVZGRCd1BlOFZZUHBoYlRQeTNab3g1TmJZbTdKaGVNL3lRcXNl?=
+ =?utf-8?B?MCtpNlVLUE00NjNiRlNUSXZUbmw4cktwVFMzWVhSb2dLbm9oZ0xVZmZSMDhY?=
+ =?utf-8?B?Tll1YVd2c0hrS1gyaEVQQ1p0cndJUWpaM2xNcUtDbHdUbnZuVXVBTUVlRk9Z?=
+ =?utf-8?B?TW5OdGM2T0FvdnBwNE1ISFNUcFlaQTRseCtWaklzWUplMndYOXovbEcyaU9T?=
+ =?utf-8?B?Q1VFenBqN0pWb2hDOGVaK21lUDk2VC96akVac3I1NUZxOCtydldVZ2tQVnBu?=
+ =?utf-8?B?TFo3aUdMMnhCd1B6U1hTVXRTcFNUMi9xb0Q1YXBVYzdvc3hPWjFJNWlVQUN3?=
+ =?utf-8?B?RGFxNUJGWUh2Zm9LeWcydG1JV1lHTFN6dk9CL3dQMC9Kdzh4KysxMmFObFly?=
+ =?utf-8?B?RUdKUGp6d2Ntc1RvZ1F5YVNsaWFreWcxdldFUml1cWNaZkRzdENEeEdrT2Uy?=
+ =?utf-8?B?bTR5dFhzOGhoY2x5RkNvN2lEZldrSGtua0dHOThPVEFPZjRxalp3K0JOVDAr?=
+ =?utf-8?B?Rk55YjZGZDRyaFNrN2I0QktGMmx5RkwwQVBDNlo4THVtTytuYWdJUFJJb1ZT?=
+ =?utf-8?B?M0VEenM5YWxRQ2tNUHVVQUdCZFkyQ1QzQm9laG1OZmoreTFsK0pPSllXTjFH?=
+ =?utf-8?B?M2xpdjh5M3ZSY0xERm1CYXRWQ0lFeGZpbGZ4ODFvS1dhSGZJY3BRT0hvM1Bj?=
+ =?utf-8?B?V3NCVEtic3FjaFpRRTNVbFhsVTFlbENBWEEvR0xWODhPYjM2c0lESFE1YWFU?=
+ =?utf-8?B?VGJpMWUvQ2NxMG04TWNiTjFWV3hIZW9FdWZrRkUwVm9MYmsvWVc5NXdvV2dK?=
+ =?utf-8?B?ZFpGcVp5NlYrVGsveXlYK04yVUJRRU03TUZyM3oxWmsxaU1rdG1FZFJURFY1?=
+ =?utf-8?B?STYyNE9VQVFmdTYrS0lLb3dZVjFNdWcwUVFVTU5Mdy9jdW9WUHNUN2NCRmow?=
+ =?utf-8?B?SEFUQ2crMzgwdTBETnVWSWh2TC9naXdBTWVkN3J0Y1RzNXJHaGtFcURXOVRU?=
+ =?utf-8?B?U1lFOEFPdllzMXFKZmxrM1dmQm54Q25IdlFWK1Urdm1GdEJINlhvQWxxSFdw?=
+ =?utf-8?B?SGdzU3JYdjYwMytISThvZS9VOWF2ZHI5SW10WlhYdmsrdm5NTzdYSm00S1N2?=
+ =?utf-8?B?aXNHV2VMVUxoRXVYWnBqbkpkeUNkK05DaVFPdWlDY1pUa2RxMzI2b1BYVU9R?=
+ =?utf-8?B?WHRIQ2dSNUtkbzd4b0hTSkRkZE4yd3I2UT09?=
+X-Microsoft-Exchange-Diagnostics: 1;AM5PR0401MB2499;6:Yeb+JJ3RnAvbar4TdLtK/YqRIaNvrVLKJWyKKd7oCPu+Kq28A97xMVMUjW7K4yGKC0Sxh57FxwJI0h4gQD4Ay+cpJUCONtRGK6Ag1j0gLfHvLoz442MklDm2U+dPi/kY/0oFGPwKFMQs9x9M42023vyV7Caxq1quS80nG3ZAsVsvMNZERP9Du9I8vzzvCUs9oQiv8baj7d3pyqE0wmOfXRgmtWv3EuXuYPVqkHIrv2GNVbZuk16WwtmHJQX+y610jKKlxdcZ9G7ZSqh6HotppV9tDqAdA+abLIWWePQMS8KKgqAVfRQEFICvsJEYPgA9v4ZEkuTrkRdzkiuiOEGdvE6DzgY7n/VU6qbjBWH4RII=;5:SnjGEpfT3rmnmnAVLgtVjjSX/U2ljX+09cLbInoqAwxXTKmLLSrRfv18nTUTzZ7NFHQWTunDxXNByR0/cy769uG1Lrv5G/1QL5buXk7UxLN7+7Rlu2wJvy+7BxzLF8oGuU3ruxYz2O96V3+Lh4AUVkyVW5tIh6t2GOQND+GUPGY=;24:pANqa6EHJxEufPHF7lB3GmqsIusH5D/p1ckHM6eHjL8hNNhu2Oi9oNt8T+91aQvpcXYlEzG4Q03VJvVxjQZTi5BuCdnwH3ttEfeEWU+GbD8=;7:BuERg55rQz/I+y1o5gpC7Em+ZbtTmwPNVRpC3axbUGaBXkuE9G7najQpwIpRHvXiLRrkrCHiU9ej6CmfoJqn2bZ88sP+xWrhziDlYn7N7N9WxYrkYHPSWCkD9qmprhOz7I1RopMfv1656mgvnweFnzVz3Oc3DjAJiqh7u6A91jiYxtnLBh5SCXUveImjpP7ORb8wnsBoNpMeyA9YuLprcDwHeZqXEP4s/zAFgXKt3ZF8IGGhxCtNd6m1LTRwlY9Q
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Nov 2017 16:53:50.6172
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 40652b74-c1a1-4501-fe93-08d52ea4f1ac
+X-MS-Exchange-CrossTenant-Id: f251f123-c9ce-448e-9277-34bb285911d9
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f251f123-c9ce-448e-9277-34bb285911d9;Ip=[192.38.82.195];Helo=[mail.win.dtu.dk]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM5PR0401MB2499
+X-MS-Exchange-Organization-AuthSource: ait-pexedg02.win.dtu.dk
+X-MS-Exchange-Organization-AuthAs: Anonymous
+X-OriginatorOrg: win.dtu.dk
+X-MS-Exchange-Transport-EndToEndLatency: 00:00:01.3911546
+X-MS-Exchange-Processed-By-BccFoldering: 15.20.0239.006
+X-Microsoft-Exchange-Diagnostics:
+	1;DB6PR0401MB2504;27:eW9oZDU7B5OgTwUxKff0zQt+d2uIz98doXrwomgvVYLk+Evy24JudPdJwUIjr7wkj28qTFVXDJsLTdkpS1Skc1gG2i1cxRryq71wcMMOmmlA/n41GoExYl+n//8xoH30
+X-Microsoft-Antispam-Mailbox-Delivery:
+	ex:0;auth:0;dest:I;ENG:(400001000128)(400125000095)(20160514016)(750103)(520011016)(400001001318)(400125100095)(61617190)(400001002128)(400125200095);
+MIME-Version: 1.0
+
+Hi
+
+> Thanks again - you are right.
+> 
+> I still have some difficulties though.
+> 
+> I can execute the following jobscript on an application node but it
+> fails when submitted to the hpc queue using qsub
+> 
+> #!/bin/sh
+> 
+> ## Embedded options to qsub - start with #PBS
+> 
+> # -- Name of the job ---
+> #PBS -N Test
+> 
+> # –- specify queue --
+> #PBS -q hpc
+> 
+> # -- estimated wall clock time (execution time): hh:mm:ss --
+> #PBS -l walltime=00:10:00
+> 
+> # –- number of processors/cores/nodes --
+> #PBS -l nodes=1:ppn=8
+> 
+> # –- user email address --
+> #PBS -M havtorn93@gmail.com<mailto:havtorn93@gmail.com>
+> 
+> # –- mail notification –-
+> #PBS -m abe
+> 
+> # -- run in the current working (submission) directory --
+> if test X$PBS_ENVIRONMENT = XPBS_BATCH; then cd $PBS_O_WORKDIR; fi
+> 
+> 
+> ## Modules to load
+> module load python3/3.6.0
+> 
+> ## Scritps to execute
+> python3 test.py --iters 1000 --njobs -1 > output.out
+> 
+> 
+> The error is
+> 
+> Loaded module: python3/3.6.0
+> 'import site' failed; use -v for traceback
+> Traceback (most recent call last):
+>   File "test.py", line 1, in <module>
+>     from math import sqrt
+> ImportError: No module named math
+> 
+> The code I try to run, test.py, uses the following import statements
+> 
+> from math import sqrt
+> import argparse
+> import time
+> import os
+> import random
+> import numpy as np
+> 
+> Should I load “math” as a module? I cannot seem to do it by module 
+> load.
+
+Hmm...don't know. Works for me. Do you touch the PYTHONPATH environment 
+variable?
+It also depends a little bit what you have installed with pip, but I 
+think math should always be
+there...and this math comes with python itself.
+
+This example works for me foo.sh:
+
+#!/bin/sh
+
+## Embedded options to qsub - start with #PBS
+# -- Name of the job ---
+#PBS -N Test
+# –- specify queue --
+#PBS -q hpc
+# -- estimated wall clock time (execution time): hh:mm:ss --
+#PBS -l walltime=00:10:00
+# –- number of processors/cores/nodes --
+#PBS -l nodes=1:ppn=8
+# –- mail notification –-
+#PBS -m abe
+
+# -- run in the current working (submission) directory --
+if test X$PBS_ENVIRONMENT = XPBS_BATCH; then cd $PBS_O_WORKDIR; fi
+
+
+## Modules to load
+module load numpy/1.11.0-python-3.5.1-openblas-0.2.15
+
+## Scritps to execute
+python3 bar.py
+
+and with bar.py:
+from math import sqrt
+import argparse
+import time
+import os
+import random
+import numpy as np
+
+print("Hello World")
+
+
+Best regards, Sebastian
+
+PS: I am offline for some hours now...
+
+
+> Thanks for your help.
+> 
+> Best Jakob
+> 
+> 
+> Den 18. nov. 2017 kl. 16.50 skrev Sebastian Borchert via RT
+> <support@cc.dtu.dk<mailto:support@cc.dtu.dk>>:
+> 
+> Hi Jakob
+> 
+> Thanks a lot!
+> 
+> I run into one additional problem however.
+> 
+> I can successfully install joblib for Python 2.7.3 and 3.6.0 by doing
+> 
+> module load python/2.7.3
+> pip install --user joblib
+> 
+> or
+> 
+> module load python3/3.6.0
+> pip3 install --user joblib
+> 
+> respectively.
+> 
+> 
+> However, when I try the same for multiprocessing, while using the
+> correct python version,
+> 
+> pip install --user multiprocessing
+> 
+> works fine but
+> 
+> pip3 install --user multiprocessing
+> 
+> fails with the error message
+> 
+> n-62-27-21(s132315) $ pip3 install --user joblib
+> Collecting joblib
+>  Using cached joblib-0.11-py2.py3-none-any.whl
+> Installing collected packages: joblib
+> Successfully installed joblib-0.11
+> ~
+> n-62-27-21(s132315) $ pip3 install --user multiprocessing
+> Collecting multiprocessing
+>  Using cached multiprocessing-2.6.2.1.tar.gz
+>    Complete output from command python setup.py egg_info:
+>    Traceback (most recent call last):
+>      File "<string>", line 1, in <module>
+>      File "/tmp/pip-build-g9ee8t1w/multiprocessing/setup.py", line 94
+>        print 'Macros:'
+>                      ^
+>    SyntaxError: Missing parentheses in call to 'print'
+> 
+>    ----------------------------------------
+> Command "python setup.py egg_info" failed with error code 1 in
+> /tmp/pip-build-g9ee8t1w/multiprocessing/
+> ~
+> 
+> It seems that python3 has already a multiprocessing - module installed.
+> So just use the installed one.
+> The one you are trying to install is maybe not python3 compatible.
+> 
+> Best regards, Sebastian
+> 
+> 
+> How can this be?
+> 
+> Best regards
+> Jakob
+> 
+> 
+> Den 16. nov. 2017 kl. 18.01 skrev Andrea Bordoni via RT
+> <support@cc.dtu.dk<mailto:support@cc.dtu.dk><mailto:support@cc.dtu.dk>>:
+> 
+> Hi Jakob,
+> 
+> the reason is that those multiprocessing and joblib are python
+> packages and are not available as module in our system.
+> By the way, to see the list of available modules, use the command
+> module avail
+> 
+> You should first choose the python versione that you need:
+> module avail python
+> -------------------- /apps/dcc/etc/ModulesSL64/modulefiles
+> ---------------------
+> python/2.6.8          python/2.7.3(default) python3/3.5.1
+> python/2.7.12_ucs4    python3/3.2.5         python3/3.6.0
+> python/2.7.13         python3/3.3.0
+> python/2.7.13_ucs4    python3/3.4.1
+> 
+> load the version that you need, for example
+> module load python/2.7.3
+> 
+> Then you can install the packages that you need
+> pip install --user multiprocessing
+> pip install --user joblib
+> 
+> This should install the packages in your home directory, and therefore
+> does not require any special
+> system privileges.
+> 
+> The you can try to use them, on a single node.
+> 
+> Best regards
+> 
+> Andrea
+> 
+> 
+> 
+> I would like to do multithreaded and/or multi CPU processing on the
+> HPC using Python.
+> 
+> I have previously used the multiprocessing and joblib libraries for
+> Python for this purpose, however not on the HPC.
+> 
+> Doing
+> 
+> module load multiprocessing
+> module load joblib
+> 
+> both return
+> 
+> ModuleCmd_Load.c(204):ERROR:105: Unable to locate a modulefile for
+> 'multiprocessing'
+> ~/Documents/masters/evostrat/hpc/test
+> 
+> so I figure something is wrong.
+> 
+> How can I execute Python code that runs on multiple threads or CPUs on
+> the HPC? I.e. I would like to submit a single job with a single Python
+> script that requires multiprocessing.
+> 
+> Thanks in advance,
+> 
+> Jakob D. Havtorn
+
+

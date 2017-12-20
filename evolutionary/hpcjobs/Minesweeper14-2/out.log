@@ -1,0 +1,21 @@
+population    : 100                                                                  
+workers       : 24                                                                   
+save_dir      : /zhome/c2/b/86488/Documents/deep/evolutionary/hpcjobs/Minesweeper14-2
+learning_rate : 0.1                                                                  
+sigma         : 0.1                                                                  
+reg           : {'L2': 0.003}                                                        
+
+Generation      0 | Steps        612 | Test reward     0.6 | Mean pop reward    -0.3 | Time   80.81 seconds
+Generation    100 | Steps      61120 | Test reward     0.1 | Mean pop reward    -0.2 | Time  462.63 seconds
+Generation    200 | Steps     142445 | Test reward    -0.0 | Mean pop reward    -0.5 | Time  844.97 seconds
+Generation    300 | Steps     311931 | Test reward    -0.3 | Mean pop reward    -2.9 | Time 1231.05 seconds
+Generation    400 | Steps     609565 | Test reward     0.3 | Mean pop reward    -4.1 | Time 1615.92 seconds
+Generation    500 | Steps     963900 | Test reward     0.4 | Mean pop reward    -5.2 | Time 2001.31 seconds
+Generation    600 | Steps    1358776 | Test reward    -0.3 | Mean pop reward    -5.3 | Time 2390.42 seconds
+Generation    700 | Steps    1803322 | Test reward    -4.5 | Mean pop reward    -6.5 | Time 2779.80 seconds
+Generation    800 | Steps    2282586 | Test reward    -3.9 | Mean pop reward    -6.4 | Time 3166.63 seconds
+Generation    900 | Steps    2782410 | Test reward    -1.2 | Mean pop reward    -7.8 | Time 3554.93 seconds
+Generation   1000 | Steps    3299721 | Test reward    -1.7 | Mean pop reward    -7.5 | Time 3942.50 seconds
+Generation   1100 | Steps    3831634 | Test reward    -6.0 | Mean pop reward    -7.5 | Time 4332.37 seconds
+Generation   1200 | Steps    4378695 | Test reward    -6.8 | Mean pop reward    -8.4 | Time 4721.40 seconds
+Generation   1300 | Steps    4938903 | Test reward    -5.0 | Mean pop reward    -8.2 | Time 5107.65 seconds

@@ -1,0 +1,22 @@
+population    : 100                                                                  
+workers       : 20                                                                   
+save_dir      : /zhome/c2/b/86488/Documents/deep/evolutionary/hpcjobs/Minesweeper16-2
+learning_rate : 0.1                                                                  
+sigma         : 0.1                                                                  
+reg           : {'L2': 0.003}                                                        
+
+Generation      0 | Steps        472 | Test reward    -0.5 | Mean pop reward    -0.1 | Time  159.61 seconds
+Generation    100 | Steps      46641 | Test reward    -0.2 | Mean pop reward    -0.0 | Time  464.66 seconds
+Generation    200 | Steps     101674 | Test reward    -0.3 | Mean pop reward    -0.1 | Time  770.19 seconds
+Generation    300 | Steps     179425 | Test reward    -0.5 | Mean pop reward    -0.8 | Time 1093.80 seconds
+Generation    400 | Steps     277231 | Test reward    -1.1 | Mean pop reward    -0.8 | Time 1471.13 seconds
+Generation    500 | Steps     399506 | Test reward    -1.0 | Mean pop reward    -1.2 | Time 1797.89 seconds
+Generation    600 | Steps     533059 | Test reward    -0.7 | Mean pop reward    -1.6 | Time 2125.45 seconds
+Generation    700 | Steps     681560 | Test reward    -1.1 | Mean pop reward    -1.7 | Time 2435.58 seconds
+Generation    800 | Steps     850429 | Test reward    -2.3 | Mean pop reward    -2.1 | Time 2744.92 seconds
+Generation    900 | Steps    1035827 | Test reward    -2.1 | Mean pop reward    -2.5 | Time 3057.23 seconds
+Generation   1000 | Steps    1232259 | Test reward    -2.8 | Mean pop reward    -2.3 | Time 3365.88 seconds
+Generation   1100 | Steps    1442216 | Test reward    -3.2 | Mean pop reward    -2.6 | Time 3677.67 seconds
+Generation   1200 | Steps    1662565 | Test reward    -2.2 | Mean pop reward    -2.7 | Time 3999.25 seconds
+Generation   1300 | Steps    1889055 | Test reward    -2.5 | Mean pop reward    -2.5 | Time 4312.79 seconds
+Generation   1400 | Steps    2119577 | Test reward    -3.2 | Mean pop reward    -2.8 | Time 4634.64 seconds

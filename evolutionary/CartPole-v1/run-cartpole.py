@@ -27,7 +27,7 @@ def fitnessfun(env, model):
         observation, reward, done, info = env.step(np.argmax(action))
         total_reward += reward
         steps += 1
-    return total_reward, steps
+    return total_reward, {'steps': steps, 'win': 0}
 
 
 def testfun(model, env, episodes):
@@ -45,8 +45,12 @@ def testfun(model, env, episodes):
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--nwrk', type=int, default=mp.cpu_count())
-parser.add_argument('--nags', type=int, default=20)
+parser.add_argument('--nags', type=int, default=30)
 parser.add_argument('--ngns', type=int, default=250)
+parser.add_argument('--lrte', type=float, default=0.03)
+parser.add_argument('--cint', type=int, default=10)
+parser.add_argument('--sigm', type=float, default=0.1)
+parser.add_argument('--regu', type=float, default=0.0001)
 args = parser.parse_args()
 
 env = gym.make('CartPole-v1')
@@ -89,14 +93,14 @@ if __name__ == '__main__':
     try:
         mp.freeze_support()
         e = ES(fun=fitnessfun, model=model, env=env, population=args.nags, 
-               learning_rate=0.01, sigma=0.1, workers=args.nwrk, reg={'L2': 0.001},
+               learning_rate=args.lrte, sigma=args.sigm, workers=args.nwrk, reg={'L2': args.regu},
                save_dir=save_dir)
         e.load_checkpoint()
         
         if DO_PROFILE:
             cProfile.run('e.evolve(args.ngns, print_every=1, plot_every=10)', 'profilingstats')
         
-        e.evolve(args.ngns, plot_every=5, checkpoint_every=20)
+        e.evolve(args.ngns, plot_every=args.cint, checkpoint_every=args.cint)
 
         if DO_PROFILE:
             p = pstats.Stats('profilingstats')
