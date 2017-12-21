@@ -6,6 +6,11 @@ import gym
 import pickle
 from sklearn.preprocessing import normalize
 
+import sys
+import os
+sys.path.append('../')
+from minesweeper_tk import Minesweeper
+
 
 model = "full_6x6_CNN"
 # training settings
@@ -14,7 +19,7 @@ epochs = 100000 # number of training batches
 batch_size = 200 # number of timesteps in a batch
 rollout_limit = 50 # max rollout length
 discount_factor = 0 # reward discount factor (gamma), 1.0 = no discount
-learning_rate = 0.00005 # you know this by now #0.001, 
+learning_rate = 0.00002 # you know this by now #0.001, 
                                                #5600: 78% win --> LR: 0.0001
                                                #6801: 87% win --> LR: 0.00002
                                                 

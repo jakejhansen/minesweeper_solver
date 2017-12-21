@@ -6,6 +6,10 @@ import gym
 import pickle
 from sklearn.preprocessing import normalize
 
+import sys
+import os
+sys.path.append('../')
+from minesweeper_tk import Minesweeper
 
 model = "condensed_6x6_v4"
 # training settings
@@ -92,7 +96,6 @@ train_f = optimizer.minimize(loss_f)
 saver = tf.train.Saver() # we use this later to save the model
 
 # test forward pass
-from minesweeper_tk import Minesweeper
 env = Minesweeper(display=False, ROWS = 6, COLS = 6, MINES = 7, OUT = "CONDENSED", rewards = {"win" : 1, "loss" : -1, "progress" : 0.9, "noprogress" : -0.3, "YOLO" : -0.3})
 state = env.stateConverter(env.get_state()).flatten()
 with tf.Session() as sess:

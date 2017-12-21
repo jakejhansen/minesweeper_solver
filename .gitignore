@@ -3,3 +3,4 @@
 evolutionary/.DS_Store
 .DS_Store
 .ipynb_checkpoints/*
+policy_gradients/condensed_6x6_CNN_backup/

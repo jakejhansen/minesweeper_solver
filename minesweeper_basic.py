@@ -149,10 +149,10 @@ def reveal(screen, grid, col, row, myfont, checked, press = "LM"):
 
 if __name__ == "__main__":
 
-    ROWS = 4
-    COLS = 4
+    ROWS = 6
+    COLS = 6
     SIZEOFSQ = 100
-    MINES = 3
+    MINES = 6
 
     grid = np.zeros((ROWS,COLS), dtype=object)
     #color of squares

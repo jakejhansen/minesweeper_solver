@@ -5,6 +5,10 @@ import numpy as np
 import tensorflow as tf
 from tensorflow.python.ops.nn import relu, softmax
 import gym
+
+import sys
+import os
+sys.path.append('../')
 from minesweeper_tk import Minesweeper
 
 

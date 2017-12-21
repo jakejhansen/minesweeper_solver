@@ -5,6 +5,10 @@ import numpy as np
 import tensorflow as tf
 from tensorflow.python.ops.nn import relu, softmax
 import gym
+
+import sys
+import os
+sys.path.append('../')
 from minesweeper_tk import Minesweeper
 
 
@@ -91,7 +95,7 @@ if __name__ == "__main__":
         lost_games = 0
 
         #Test for a number of games
-        while games < 4000:
+        while games < 10000:
             if games % 500 == 0:
                 print("Games completed:", games)
 
@@ -149,4 +153,4 @@ if __name__ == "__main__":
                     break
 
         print("games: {}, won: {}, lost: {}, stuck: {}, win_rate : {:.1f}%".format(games, won_games, lost_games, stuck, won_games/games * 100))
-        
+    
