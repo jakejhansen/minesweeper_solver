@@ -9,7 +9,7 @@ import IPython
 
 
 class Minesweeper(object):
-    def __init__(self, ROWS = 10, OUT = "FULL", COLS = 10, SIZEOFSQ = 100, MINES = 13, interval = 0, display = False, rewards = {"win" : 10, "loss" : -10, "progress" : 1, "noprogress" : -1, "YOLO" : -0.5}):
+    def __init__(self, ROWS = 10, OUT = "FULL", COLS = 10, SIZEOFSQ = 100, MINES = 13, interval = 0, display = False, rewards = {"win" : 1, "loss" : -1, "progress" : 0.9, "noprogress" : -0.3, "YOLO" : -0.3}):
         """ Initialize Minesweeper
             Rows, Cols: int  - Number of rows and cols on the board
             SIZEOFSQ: pixels -  Determines the size of the window, reduce to get smaller window
