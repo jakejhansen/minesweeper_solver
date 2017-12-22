@@ -33,8 +33,12 @@ def train(params):
     qagent = QAgent(params)
     if params.is_train:
         qagent.fit()
-    else:
+    elif params.eval_mode == 0:
+        qagent.evaluate_mine()
+    elif params.eval_mode == 1:
         qagent.test_mine()
+    elif params.eval_mode == 2:
+        qagent.play_mine()
 
 # View tensorboard with 
 # tensorboard --logdir output
@@ -107,15 +111,16 @@ if __name__ == "__main__":
     parser.add_argument('--intcheckpoint', dest="interval_checkpoint", type=int, default=10000, help="frequency of saving model checkpoints")
     parser.add_argument('--memorycheckpoint', dest="memory_checkpoint", type=int, default=int(1e5), help="Frequency of saving memory based on addition counter.")
     parser.add_argument('--restore-memory', dest="restore_memory", type=bool, default=False, help="If True, restore replay memory.")
-    parser.add_argument('--show', dest="show_game", action="store_true", help="show the Atari game output")
+    parser.add_argument('--show', dest="show_game", action="store_true", help="show the Minesweeper game output")
+    parser.add_argument('--eval-mode', dest="eval_mode", help="0 = evaluate models in range, 1 = test model/play if show_game is true")
     parser.add_argument('--seed', dest="seed", type=int, default=0, help="The random seed value. Default at 0 means deterministic for all ops in Tensorflow 1.4")
 
     # Parse command line arguments and run the training process
 
     parser.set_defaults(game="minesweeper")
     parser.set_defaults(env='minesweeper')
-    parser.set_defaults(mines_min=6)
-    parser.set_defaults(mines_max=6)
+    parser.set_defaults(mines_min=2)
+    parser.set_defaults(mines_max=2)
     parser.set_defaults(num_iterations=10000000)
 
     parser.set_defaults(input_width=6)
@@ -148,8 +153,8 @@ if __name__ == "__main__":
     #parser.set_defaults(clip_delta=True) # This does not really seem to do much since the rewards are so small
     #parser.set_defaults(dueling_type="mean") # Without this and with fc, the same network as Jacob
 
-    #parser.set_defaults(model_file='model-best')
-    #parser.set_defaults(eval_iterations=10000)
+    parser.set_defaults(model_file='model-440000')
+    parser.set_defaults(eval_iterations=10000)
     #parser.set_defaults(mines_min=1)
     #parser.set_defaults(mines_max=1)
     #parser.set_defaults(network_type=1) # 2 is the one for the report results
@@ -160,12 +165,13 @@ if __name__ == "__main__":
     parser.set_defaults(num_steps=500) # Number of steps to play atarai
     parser.set_defaults(num_games=10000) # Number of games to play in minesweeper
 
-    parser.set_defaults(is_train=True)
-    parser.set_defaults(show_game=False)
+    parser.set_defaults(is_train=False)
+    parser.set_defaults(show_game=True)
+    parser.set_defaults(eval_mode=2)
 
     params = parser.parse_args()
 
-    # To test on all mines
+    # #To test on all mine configurations with the selected model
     # for mines in range(1, 13):
     #     params.mines_min=mines
     #     params.mines_max=mines

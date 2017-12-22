@@ -493,6 +493,7 @@ class QAgent:
 
 
     def play_mine(self):
+        # Show the game being played visually
 
         # Initialize a new game and store the screens in the self.history
         screen, reward, is_done = self.game.new_game()
@@ -520,16 +521,51 @@ class QAgent:
                 saver.restore(sess, model_path)
 
 
+            prev_action_id = -1
+            prev_episode_num = -1 # Just has to be different intially than prev
+            action_id = -1 
+            eval_num_episodes = 0
+
             while self.game.episode_number < self.params.num_games:
                 if self.params.show_game:
                     inp = input("Enter input (ROW,COL)")
-                self._sel_move(sess, 0)
 
-            print(self.game.episode_number)
+                prev_action_id = action_id
 
-            print(self.game.win_rate)
+                feed_dict_eval  = { self.dqn_train.pl_screens: self.history.get() }
+                qvalues = sess.run(self.dqn_train.qvalues, feed_dict=feed_dict_eval)
+
+                # Choose the best action based on the approximated Q-values
+                qvalue_max = np.max(qvalues[0])
+                action_id  = np.argmax(qvalues[0])
+
+                # Skip this action if we are in the same game
+                if prev_action_id == action_id and prev_episode_num == eval_num_episodes:
+                    if self.params.show_game:
+                        print("Network repeated an action")
+                    action_id = random.randrange(self.game.num_actions)
+
+                prev_episode_num = eval_num_episodes
+
+                # Perform the action
+                screen, reward, done = self.game.act(action_id)
+                self.history.add(screen)
+
+                # Stop printing in the minesweeper environment
+                # if reward == self.game.env.rewards["win"]:
+                #     eval_num_wins += 1
+
+                if done:
+                    eval_num_episodes += 1
+
+                    screen, reward, done = self.game.new_game()
+                    for _ in range(self.params.history_length):
+                        self.history.add(screen)
+
 
     def test_mine(self):
+
+        # Tests a single model
 
         # Initialize a new game and store the screens in the self.history
         screen, reward, is_done = self.game.new_game()
@@ -620,6 +656,7 @@ class QAgent:
 
     def evaluate_mine(self):
         # Test a number of models using the naming scheme
+        # to find the best model in a range
 
         # Initialize a new game and store the screens in the self.history
         screen, reward, is_done = self.game.new_game()
