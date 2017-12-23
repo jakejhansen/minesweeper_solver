@@ -20,7 +20,7 @@ from agent import QAgent
 
 import random
 
-def train(params):
+def run_model(params):
 
     # https://stackoverflow.com/questions/11526975/set-random-seed-programwide-in-python
     # https://stackoverflow.com/questions/30517513/global-seed-for-multiple-numpy-imports
@@ -112,16 +112,16 @@ if __name__ == "__main__":
     parser.add_argument('--memorycheckpoint', dest="memory_checkpoint", type=int, default=int(1e5), help="Frequency of saving memory based on addition counter.")
     parser.add_argument('--restore-memory', dest="restore_memory", type=bool, default=False, help="If True, restore replay memory.")
     parser.add_argument('--show', dest="show_game", action="store_true", help="show the Minesweeper game output")
-    parser.add_argument('--eval-mode', dest="eval_mode", help="0 = evaluate models in range, 1 = test model/play if show_game is true")
+    parser.add_argument('--eval-mode', dest="eval_mode", help="0 = evaluate models in range, 1 = test model, 2 = play the game use show_game with this if you want to see it play")
     parser.add_argument('--seed', dest="seed", type=int, default=0, help="The random seed value. Default at 0 means deterministic for all ops in Tensorflow 1.4")
 
     # Parse command line arguments and run the training process
 
     parser.set_defaults(game="minesweeper")
     parser.set_defaults(env='minesweeper')
-    parser.set_defaults(mines_min=2)
-    parser.set_defaults(mines_max=2)
-    parser.set_defaults(num_iterations=10000000)
+    parser.set_defaults(mines_min=1)
+    parser.set_defaults(mines_max=12)
+    parser.set_defaults(num_iterations=30000000)
 
     parser.set_defaults(input_width=6)
     parser.set_defaults(input_height=6)
@@ -129,7 +129,7 @@ if __name__ == "__main__":
     parser.set_defaults(train_freq=1) 
     parser.set_defaults(nchannels=2)
 
-    parser.set_defaults(batch_size=32)
+    parser.set_defaults(batch_size=400)
     parser.set_defaults(memory_checkpoint=int(5e5))
     parser.set_defaults(train_start=int(5e4))
     parser.set_defaults(replay_capacity=int(1e6))
@@ -140,7 +140,7 @@ if __name__ == "__main__":
     parser.set_defaults(reward_recent_update=int(1e5))
 
     parser.set_defaults(discount=0.0)
-    parser.set_defaults(learning_rate=0.001)
+    parser.set_defaults(learning_rate=0.00025)
     #parser.set_defaults(learning_rate=0.00004)
     parser.set_defaults(learning_rate_step=20000)
     parser.set_defaults(learning_rate_decay=0.90)
@@ -153,8 +153,12 @@ if __name__ == "__main__":
     #parser.set_defaults(clip_delta=True) # This does not really seem to do much since the rewards are so small
     #parser.set_defaults(dueling_type="mean") # Without this and with fc, the same network as Jacob
 
-    parser.set_defaults(model_file='model-440000')
-    parser.set_defaults(eval_iterations=10000)
+    #parser.set_defaults(model_file='model-440000')
+    #parser.set_defaults(eval_iterations=1000)
+
+    #parser.set_defaults(model_file='model-2800000')
+    #parser.set_defaults(eval_iterations=10000)
+
     #parser.set_defaults(mines_min=1)
     #parser.set_defaults(mines_max=1)
     #parser.set_defaults(network_type=1) # 2 is the one for the report results
@@ -162,21 +166,24 @@ if __name__ == "__main__":
     #parser.set_defaults(dueling_type=None) # Without this and with fc, the same network as Jacob
 
     # If we want to play
-    parser.set_defaults(num_steps=500) # Number of steps to play atarai
-    parser.set_defaults(num_games=10000) # Number of games to play in minesweeper
+    #parser.set_defaults(num_steps=500) # Number of steps to play atarai
+    #parser.set_defaults(num_games=10000) # Number of games to play in minesweeper
 
     parser.set_defaults(is_train=False)
-    parser.set_defaults(show_game=True)
-    parser.set_defaults(eval_mode=2)
+    #parser.set_defaults(show_game=False)
+    parser.set_defaults(eval_mode=1)
 
     params = parser.parse_args()
 
-    # #To test on all mine configurations with the selected model
+    # Now, we are training with a varying number of mines to see what happens.
+
+
+    #To test on all mine configurations with the selected model
     # for mines in range(1, 13):
     #     params.mines_min=mines
     #     params.mines_max=mines
     #     print("Mines = ", mines)
-    #     train(params)
+    #     run_model(params)
     #     tf.reset_default_graph()
 
-    train(params)
+    run_model(params)
