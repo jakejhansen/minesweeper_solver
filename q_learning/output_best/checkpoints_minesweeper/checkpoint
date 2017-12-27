@@ -1,0 +1,3 @@
+model_checkpoint_path: "C:\\github\\tensor_pg\\02417_deep\\output\\checkpoints_minesweeper\\model-best"
+all_model_checkpoint_paths: "C:\\github\\tensor_pg\\02417_deep\\output\\checkpoints_minesweeper\\model-best"
+all_model_checkpoint_paths: "C:\\github\\tensor_pg\\02417_deep\\output\\checkpoints_minesweeper\\model-best-random"

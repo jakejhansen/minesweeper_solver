@@ -492,77 +492,6 @@ class QAgent:
                                 self.count_act_random, self.count_act_greedy, action_str))
 
 
-    def play_mine(self):
-        # Show the game being played visually
-
-        # Initialize a new game and store the screens in the self.history
-        screen, reward, is_done = self.game.new_game()
-        for _ in range(self.params.history_length):
-            self.history.add(screen)
-
-        # Initialize the TensorFlow session
-        gpu_options = tf.GPUOptions(
-           per_process_gpu_memory_fraction=self.params.gpu_memory
-        )
-
-        with tf.Session(config=tf.ConfigProto(gpu_options=gpu_options)) as sess:
-
-            # Initialize the TensorFlow session
-            init = tf.global_variables_initializer()
-            sess.run(init)
-
-            # Only save trainable variables and the global iteration to disk
-            tf_vars_to_save = tf.trainable_variables() + [self.dqn_train.global_iteration]
-            saver = tf.train.Saver(tf_vars_to_save, max_to_keep=200)
-
-            if self.params.model_file is not None:
-                # Load pre-trained model from disk
-                model_path = os.path.join(self.checkpoint_dir, self.params.model_file)
-                saver.restore(sess, model_path)
-
-
-            prev_action_id = -1
-            prev_episode_num = -1 # Just has to be different intially than prev
-            action_id = -1 
-            eval_num_episodes = 0
-
-            while self.game.episode_number < self.params.num_games:
-                if self.params.show_game:
-                    inp = input("Enter input (ROW,COL)")
-
-                prev_action_id = action_id
-
-                feed_dict_eval  = { self.dqn_train.pl_screens: self.history.get() }
-                qvalues = sess.run(self.dqn_train.qvalues, feed_dict=feed_dict_eval)
-
-                # Choose the best action based on the approximated Q-values
-                qvalue_max = np.max(qvalues[0])
-                action_id  = np.argmax(qvalues[0])
-
-                # Skip this action if we are in the same game
-                if prev_action_id == action_id and prev_episode_num == eval_num_episodes:
-                    if self.params.show_game:
-                        print("Network repeated an action")
-                    action_id = random.randrange(self.game.num_actions)
-
-                prev_episode_num = eval_num_episodes
-
-                # Perform the action
-                screen, reward, done = self.game.act(action_id)
-                self.history.add(screen)
-
-                # Stop printing in the minesweeper environment
-                # if reward == self.game.env.rewards["win"]:
-                #     eval_num_wins += 1
-
-                if done:
-                    eval_num_episodes += 1
-
-                    screen, reward, done = self.game.new_game()
-                    for _ in range(self.params.history_length):
-                        self.history.add(screen)
-
-
     def test_mine(self):
 
         # Tests a single model
@@ -614,6 +543,11 @@ class QAgent:
 
             #for eval_iterations in range(self.params.eval_iterations):
             while eval_num_episodes < self.params.eval_iterations: # Play eval_iterations games
+                if self.params.show_game:
+                    inp = input("Enter and agent plays, e for exit: ")
+                    if inp == "e":
+                        break
+
                 prev_action_id = action_id
 
                 feed_dict_eval  = { self.dqn_train.pl_screens: self.history.get() }
@@ -625,6 +559,8 @@ class QAgent:
 
                 # Skip this action if we are in the same game
                 if prev_action_id == action_id and prev_episode_num == eval_num_episodes:
+                    if self.params.show_game:
+                        print("Agent repeated action, selecting random")
                     action_id = random.randrange(self.game.num_actions)
 
                 prev_episode_num = eval_num_episodes
@@ -652,7 +588,8 @@ class QAgent:
                     for _ in range(self.params.history_length):
                         self.history.add(screen)
 
-            print("  Win Rate: %.2f" % ((eval_num_wins / eval_num_episodes)*100))
+            if eval_num_episodes > 0:
+                print("  Win Rate: %.2f" % ((eval_num_wins / eval_num_episodes)*100))
 
     def evaluate_mine(self):
         # Test a number of models using the naming scheme

@@ -2,48 +2,15 @@
 This module contains class definitions for open ai gym environments.
 """
 
-import os
-import collections
 import argparse
 import random
-from datetime import datetime
-import time
-from functools import reduce
-
-import cv2
 import numpy as np
 import tensorflow as tf
-
-from qnetwork import DeepQNetwork, update_target_network
-from replay_memory import ReplayMemory, ScreenHistory
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' 
 from agent import QAgent
 
-import random
-
-def run_model(params):
-
-    # https://stackoverflow.com/questions/11526975/set-random-seed-programwide-in-python
-    # https://stackoverflow.com/questions/30517513/global-seed-for-multiple-numpy-imports
-    random.seed(params.seed)
-    np.random.seed(params.seed)
-    # Must be called before Session
-    # https://stackoverflow.com/questions/38469632/tensorflow-non-repeatable-results/40247201#40247201
-    tf.set_random_seed(params.seed)
-
-    qagent = QAgent(params)
-    if params.is_train:
-        qagent.fit()
-    elif params.eval_mode == 0:
-        qagent.evaluate_mine()
-    elif params.eval_mode == 1:
-        qagent.test_mine()
-    elif params.eval_mode == 2:
-        qagent.play_mine()
-
-# View tensorboard with 
-# tensorboard --logdir output
-
-if __name__ == "__main__":
+def setup_model(mode = 0):
 
     parser = argparse.ArgumentParser(prog="train.py", description="Train Deep Q-Network for Atari games")
 
@@ -99,11 +66,11 @@ if __name__ == "__main__":
 
     # Parameters for evaluation of the model
     parser.add_argument('--evalfreq', dest="eval_frequency", type=int, default=250000, help="frequency of model evaluation")
-    parser.add_argument('--evaliterations', dest="eval_iterations", type=int, default=125000, help="number of game iterations for each evaluation")
+    parser.add_argument('--evaliterations', dest="eval_iterations", type=int, default=125000, help="number of games played in each evaluation")
     parser.add_argument('--evalepsilon', dest="eval_epsilon", type=float, default=0.05, help="epsilon random move when evaluating")
     parser.add_argument('--minepsilon', dest="min_epsilon", type=float, default=0.1, help="Lowest epsilon when exploring")
     parser.add_argument('--num-steps', dest="num_steps", type=int, default=5000, help="Number of test steps when playing, each step is an action")
-    parser.add_argument('--reward-recent', dest="reward_recent", type=int, default=1000, help="The number of episodes before resetting recent reward")
+    parser.add_argument('--reward-recent-update', dest="reward_recent_update", type=int, default=10000, help="The number of episodes before resetting recent reward")
     parser.add_argument('--num-games', dest="num_games", type=int, default=5000, help="Number of test games to play minesweeper")
 
     # Parameters for outputting/debugging
@@ -112,16 +79,16 @@ if __name__ == "__main__":
     parser.add_argument('--memorycheckpoint', dest="memory_checkpoint", type=int, default=int(1e5), help="Frequency of saving memory based on addition counter.")
     parser.add_argument('--restore-memory', dest="restore_memory", type=bool, default=False, help="If True, restore replay memory.")
     parser.add_argument('--show', dest="show_game", action="store_true", help="show the Minesweeper game output")
-    parser.add_argument('--eval-mode', dest="eval_mode", help="0 = evaluate models in range, 1 = test model, 2 = play the game use show_game with this if you want to see it play")
+    parser.add_argument('--eval-mode', dest="eval_mode", 
+        help="0 = evaluate models in range (only used for selecting the best model), 1 = test model win-rate by playing the game, 2 = win-rate for random mines")
     parser.add_argument('--seed', dest="seed", type=int, default=0, help="The random seed value. Default at 0 means deterministic for all ops in Tensorflow 1.4")
 
     # Parse command line arguments and run the training process
 
     parser.set_defaults(game="minesweeper")
     parser.set_defaults(env='minesweeper')
-    parser.set_defaults(mines_min=1)
-    parser.set_defaults(mines_max=12)
-    parser.set_defaults(num_iterations=30000000)
+    parser.set_defaults(mines_min=6)
+    parser.set_defaults(mines_max=6)
 
     parser.set_defaults(input_width=6)
     parser.set_defaults(input_height=6)
@@ -129,61 +96,82 @@ if __name__ == "__main__":
     parser.set_defaults(train_freq=1) 
     parser.set_defaults(nchannels=2)
 
-    parser.set_defaults(batch_size=400)
-    parser.set_defaults(memory_checkpoint=int(5e5))
-    parser.set_defaults(train_start=int(5e4))
-    parser.set_defaults(replay_capacity=int(1e6))
-    parser.set_defaults(interval_checkpoint=int(2e4))
-
-    parser.set_defaults(eval_frequency=20000)
-    parser.set_defaults(eval_iterations=1000)
-    parser.set_defaults(reward_recent_update=int(1e5))
-
     parser.set_defaults(discount=0.0)
-    parser.set_defaults(learning_rate=0.00025)
-    #parser.set_defaults(learning_rate=0.00004)
-    parser.set_defaults(learning_rate_step=20000)
-    parser.set_defaults(learning_rate_decay=0.90)
-    parser.set_defaults(learning_rate_minimum=0.00025/4)
-    parser.set_defaults(network_update_rate=int(1e5))
-    parser.set_defaults(min_epsilon=0.1)
-    parser.set_defaults(epsilon_step=2.5e5)
-
-    parser.set_defaults(network_type=1) # 2 is the one for the report results
+    parser.set_defaults(network_type=1) # 2 is the one for the report graph results
     #parser.set_defaults(clip_delta=True) # This does not really seem to do much since the rewards are so small
     #parser.set_defaults(dueling_type="mean") # Without this and with fc, the same network as Jacob
 
-    #parser.set_defaults(model_file='model-440000')
-    #parser.set_defaults(eval_iterations=1000)
+    parser.set_defaults(seed=0)
 
-    #parser.set_defaults(model_file='model-2800000')
-    #parser.set_defaults(eval_iterations=10000)
+    if mode == 0: # Train
+        print("Training the network")
+        parser.set_defaults(is_train=True)
+        params = parser.parse_args()
+        run_model(params)
 
-    #parser.set_defaults(mines_min=1)
-    #parser.set_defaults(mines_max=1)
-    #parser.set_defaults(network_type=1) # 2 is the one for the report results
-    #parser.set_defaults(clip_delta=False) # This should be False for minesweeper, it seems
-    #parser.set_defaults(dueling_type=None) # Without this and with fc, the same network as Jacob
+    elif mode == 1: # Test minesweeper
+        print("Test minesweeper model on 6x6 board with 6 mines")
+        parser.set_defaults(output_dir='./output_best/')
+        parser.set_defaults(eval_iterations=10000)
+        parser.set_defaults(model_file='model-best')
+        parser.set_defaults(eval_mode=1)
+        params = parser.parse_args()
+        run_model(params)
 
-    # If we want to play
-    #parser.set_defaults(num_steps=500) # Number of steps to play atarai
-    #parser.set_defaults(num_games=10000) # Number of games to play in minesweeper
+    elif mode == 2: # Evaluate for a different number of mines
+        print("Test minesweeper model on 6x6 board with a random number of mines")
+        parser.set_defaults(output_dir='./output_best/')
+        parser.set_defaults(eval_iterations=10000)
+        parser.set_defaults(model_file='model-best-random')
+        parser.set_defaults(eval_mode=2)
+        params = parser.parse_args()
 
-    parser.set_defaults(is_train=False)
-    #parser.set_defaults(show_game=False)
-    parser.set_defaults(eval_mode=1)
+        print("\nTesting with best model on random number of mines")
+        run_model(params)
 
-    params = parser.parse_args()
+        print("\nTesting with best model on board with 6 mines")
+        params.model_file = "model-best"
+        tf.reset_default_graph()
+        run_model(params)
 
-    # Now, we are training with a varying number of mines to see what happens.
+    elif mode == 3: # Play 10 games
+        parser.set_defaults(show_game=True)
+        parser.set_defaults(output_dir='./output_best/')
+        parser.set_defaults(eval_iterations=10)
+        parser.set_defaults(model_file='model-best')
+        parser.set_defaults(eval_mode=1)
+        params = parser.parse_args()
+        run_model(params)
+
+# View tensorboard with 
+# tensorboard --logdir output
+
+def run_model(params):
+
+    # https://stackoverflow.com/questions/11526975/set-random-seed-programwide-in-python
+    # https://stackoverflow.com/questions/30517513/global-seed-for-multiple-numpy-imports
+    random.seed(params.seed)
+    np.random.seed(params.seed)
+    # Must be called before Session
+    # https://stackoverflow.com/questions/38469632/tensorflow-non-repeatable-results/40247201#40247201
+    tf.set_random_seed(params.seed)
+
+    qagent = QAgent(params)
+    if params.is_train:
+        qagent.fit()
+    elif params.eval_mode == 0:
+        qagent.evaluate_mine()
+    elif params.eval_mode == 1:
+        qagent.test_mine()
+    elif params.eval_mode == 2:
+        for mines in range(1, 13):
+            params.mines_min=mines
+            params.mines_max=mines
+            print("Mines =", mines)
+            qagent.test_mine()
+            tf.reset_default_graph()
+            qagent = QAgent(params)
 
 
-    #To test on all mine configurations with the selected model
-    # for mines in range(1, 13):
-    #     params.mines_min=mines
-    #     params.mines_max=mines
-    #     print("Mines = ", mines)
-    #     run_model(params)
-    #     tf.reset_default_graph()
-
-    run_model(params)
+if __name__ == "__main__":
+    setup_model(2)
