@@ -239,10 +239,10 @@ class ES(Strategy):
                 self.make_checkpoint(gen, steps, rewards, t_start, p)
                 self.plot_progress(gen)
 
-        # Save
-        self.make_checkpoint(gen, steps, rewards, t_start, p)
-        self.plot_progress(gen)
-        self.generations += generations
+            # Save
+            self.make_checkpoint(gen, steps, rewards, t_start, p)
+            self.plot_progress(gen)
+            self.generations += generations
         return self.results
 
     def get_weight_norms(self, weights):

@@ -1,7 +1,6 @@
 import matplotlib.pyplot as plt
 import os
 import pickle 
-from keras.models import load_model
 
 
 try:

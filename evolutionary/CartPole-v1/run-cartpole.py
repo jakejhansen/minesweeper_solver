@@ -45,15 +45,16 @@ def testfun(model, env, episodes):
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--nwrk', type=int, default=mp.cpu_count())
-parser.add_argument('--nags', type=int, default=30)
-parser.add_argument('--ngns', type=int, default=250)
+parser.add_argument('--nags', type=int, default=20)
+parser.add_argument('--ngns', type=int, default=100)
 parser.add_argument('--lrte', type=float, default=0.03)
 parser.add_argument('--cint', type=int, default=10)
 parser.add_argument('--sigm', type=float, default=0.1)
 parser.add_argument('--regu', type=float, default=0.0001)
+parser.add_argument('--test', action='store_true')
 args = parser.parse_args()
 
-env = gym.make('CartPole-v1')
+env = gym.make('CartPole-v0')
 
 o_shape = env.observation_space.shape
 a_shape = env.action_space.n
@@ -91,24 +92,25 @@ DO_PROFILE = False
 save_dir = os.path.split(os.path.realpath(__file__))[0]
 if __name__ == '__main__':
     try:
-        mp.freeze_support()
-        e = ES(fun=fitnessfun, model=model, env=env, population=args.nags, 
-               learning_rate=args.lrte, sigma=args.sigm, workers=args.nwrk, reg={'L2': args.regu},
-               save_dir=save_dir)
-        e.load_checkpoint()
-        
-        if DO_PROFILE:
-            cProfile.run('e.evolve(args.ngns, print_every=1, plot_every=10)', 'profilingstats')
-        
-        e.evolve(args.ngns, plot_every=args.cint, checkpoint_every=args.cint)
+        if not args.test:
+            mp.freeze_support()
+            e = ES(fun=fitnessfun, model=model, env=env, population=args.nags, 
+                learning_rate=args.lrte, sigma=args.sigm, workers=args.nwrk, reg={'L2': args.regu},
+                save_dir=save_dir)
+            e.load_checkpoint()
+            
+            if DO_PROFILE:
+                cProfile.run('e.evolve(args.ngns, print_every=1, plot_every=10)', 'profilingstats')
+            
+            e.evolve(args.ngns, plot_every=args.cint, checkpoint_every=args.cint)
 
-        if DO_PROFILE:
-            p = pstats.Stats('profilingstats')
-            p.sort_stats('cumulative').print_stats(10)
-            p.sort_stats('time').print_stats(10)
-        
-        model = load_model('model.h5')
-        testfun(model, env, 10)
+            if DO_PROFILE:
+                p = pstats.Stats('profilingstats')
+                p.sort_stats('cumulative').print_stats(10)
+                p.sort_stats('time').print_stats(10)
+        else:
+            model = load_model('model.h5')
+            testfun(model, env, 10)
     except KeyboardInterrupt:
         raise
 
