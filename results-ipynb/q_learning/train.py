@@ -11,8 +11,8 @@ from agent import QAgent
 
 class MinesweeperParameters():
     def __init__(self):
-        self.model = None
-        self.out = "./q_learning/output/"
+        self.model_file = None
+        self.output_dir = "./q_learning/output/"
         self.is_train = False
         #self.randomstart = 
         self.game = 'minesweeper'
@@ -130,6 +130,19 @@ def setup_model(mode = 0):
     if mode == 0: # Train
         print("Training the network")
         params.is_train = True
+        params.eval_iterations = 1000
+        params.eval_frequency=20000
+        params.interval_summary=500
+
+        params.discount=0.0
+        params.learning_rate=0.00025
+        params.learning_rate_step=20000
+        params.learning_rate_decay=0.90
+        params.learning_rate_minimum=0.00025/4
+        params.network_update_rate=int(1e5)
+        params.min_epsilon=0.1
+        params.epsilon_step=2.5e5
+
         run_model(params)
 
     elif mode == 1: # Test minesweeper
