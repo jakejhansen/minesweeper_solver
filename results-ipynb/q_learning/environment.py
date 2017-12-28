@@ -216,7 +216,6 @@ class MinesweeperEnvironment(BaseEnvironment):
 
 
         if not (self._recent_episode_number + 1) % self.reward_recent_update: # We count the most recent reward
-            print("Resetting recent reward counter")
             self._recent_reward = 0
             self._recent_episode_number = 0
             self._recent_games_won = 0

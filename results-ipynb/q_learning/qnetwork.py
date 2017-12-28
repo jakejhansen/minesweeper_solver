@@ -144,10 +144,10 @@ class DeepQNetwork:
         self.network_type = params.network_type
 
         # CNN layer architecture
-        self.filter_sizes        = params.filter_sizes    # 8, 4, 3
-        self.filter_strides      = params.filter_strides  # 4, 2, 1
-        self.num_filters         = params.num_filters     # 32, 64, 64
-        self.num_hidden          = params.num_hidden      # 512
+        #self.filter_sizes        = params.filter_sizes    # 8, 4, 3
+        #self.filter_strides      = params.filter_strides  # 4, 2, 1
+        #self.num_filters         = params.num_filters     # 32, 64, 64
+        #self.num_hidden          = params.num_hidden      # 512
         self.num_actions         = num_actions            # depends on game
         self.dueling_type        = params.dueling_type
 
@@ -218,9 +218,9 @@ class DeepQNetwork:
                                     name="dones")
 
             # Convert strings to lists
-            self.filter_sizes   = list(map(int, self.filter_sizes.split(",")))
-            self.filter_strides = list(map(int, self.filter_strides.split(",")))
-            self.num_filters    = list(map(int, self.num_filters.split(",")))
+            #self.filter_sizes   = list(map(int, self.filter_sizes.split(",")))
+            #self.filter_strides = list(map(int, self.filter_strides.split(",")))
+            #self.num_filters    = list(map(int, self.num_filters.split(",")))
 
             self.qvalues = self._build_cnn()
 

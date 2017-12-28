@@ -12,18 +12,16 @@ from agent import QAgent
 
 def setup_model(mode = 0):
 
-    parser = argparse.ArgumentParser(prog="train.py", description="Train Deep Q-Network for Atari games")
+    parser = argparse.ArgumentParser(prog="train.py", description="Train Deep Q-Network for Minesweeper game")
 
     # Atari ROM, TensorFlow model and output directory
-    parser.add_argument('--rom', dest='rom_file', default="./roms/Breakout.bin", type=str, help="path to atari rom (.bin) file")
     parser.add_argument('--model', dest='model_file', type=str, required=False, help="path to TensorFlow model file")
-    parser.add_argument('--out', dest='output_dir', type=str, default="./output/", help="output path models and screen captures")
+    parser.add_argument('--out', dest='output_dir', type=str, default="./q_learning/output/", help="output path models and screen captures")
 
     parser.add_argument('--train', dest="is_train", action="store_true", help="training or only playing")
     parser.add_argument('--randomstart', dest='random_start_wait', type=int, default=30, help="random number of frames to wait at start of episode")
     parser.add_argument('--game', dest='game', type=str, default="DemonAttack-v0", help="The game we play")
     parser.add_argument('--env', dest='env', type=str, default="atari", help="If we want to use atari or minesweeper")
-
 
     parser.add_argument('--gpumemory', dest="gpu_memory", type=float, default=0.5, help="The percentage of GPU memory allowed to be used by Tensorflow")
 
@@ -101,7 +99,7 @@ def setup_model(mode = 0):
     #parser.set_defaults(clip_delta=True) # This does not really seem to do much since the rewards are so small
     #parser.set_defaults(dueling_type="mean") # Without this and with fc, the same network as Jacob
 
-    parser.set_defaults(seed=0)
+    parser.set_defaults(seed=0) # 9, 11
 
     if mode == 0: # Train
         print("Training the network")
@@ -111,11 +109,11 @@ def setup_model(mode = 0):
 
     elif mode == 1: # Test minesweeper
         print("Test minesweeper model on 6x6 board with 6 mines")
-        parser.set_defaults(output_dir='./output_best/')
+        parser.set_defaults(output_dir='./q_learning/output_best/')
         parser.set_defaults(eval_iterations=10000)
         parser.set_defaults(model_file='model-best')
         parser.set_defaults(eval_mode=1)
-        params = parser.parse_args()
+        params = parser.parse_args(args=[])
         run_model(params)
 
     elif mode == 2: # Evaluate for a different number of mines
@@ -174,4 +172,4 @@ def run_model(params):
 
 
 if __name__ == "__main__":
-    setup_model(2)
+    setup_model(1)
