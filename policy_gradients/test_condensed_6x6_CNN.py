@@ -115,7 +115,6 @@ if __name__ == "__main__":
                 r_prev = r
 
                 if display:
-                    print(a_prob)
                     input()
                 s, r, done, _ = env.step(a)
                 s = s.flatten()
