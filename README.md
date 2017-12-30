@@ -5,7 +5,35 @@ This repository contains:
 * Different agents: We have agents using both policy gradients, DQN and evolutionary strategies
 
 ## How to run
-Install `pygame,tk, mss and numpy`
+### Create Anaconda virtual environment + required packages
+In order to run the contents of this notebook, it is recommended to download anaocnda for your platform here
+https://www.anaconda.com/download/
+and run the following in your terminal to setup everything you need. See file `requirements.txt` for full package list with version numbering.
+
+`conda create --name deep python=3.5.4`
+
+`source activate deep`
+
+`conda install jupyter`
+
+`python -m ipykernel install --user --name deep --display-name "Python (deep)"`
+
+`conda install -c conda-forge keras`
+
+`conda install -c conda-forge opencv`
+
+`conda install matplotlib=2.0.2`
+
+`conda install pandas`
+
+`pip install gym`
+
+`pip install mss`
+
+Run jupyter notebook using `jupyter notebook`.
+
+Manually change kernel to `Python (deep)` within the jupyter notebook if not already running.
+
 
 
 ### Base
