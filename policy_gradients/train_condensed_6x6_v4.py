@@ -240,7 +240,7 @@ try:
             #mvr = np.mean(np.sort([np.sum(r) for r in val_rewards])[5:-5])
             statistics.append([epoch, env.get_nbactions(), mtr, loss, win_rate])
             if epoch % 10 == 0:
-                print('%4d. training reward: %6.2f, loss: %7.4f' % (epoch+1, mtr, loss))
+                print('Epoch:, %4d. training reward: %6.2f, loss: %7.4f' % (epoch+1, mtr, loss))
             
             if epoch % 100 == 0:    
                 saver.save(sess, "{}/{}.ckpt".format(model,model))   
@@ -248,7 +248,7 @@ try:
             if epoch % 400 == 0:
                 #Get win-rate
                 win_rate = get_winrate(sess, env)
-                print(win_rate)
+                print("Win Rate:", win_rate)
 
                 if win_rate > win_rate_best:
                     saver.save(sess, "{}/{}_best.ckpt".format(model,model))
