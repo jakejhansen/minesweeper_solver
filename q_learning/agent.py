@@ -11,7 +11,6 @@ import time
 from functools import reduce
 import time
 
-import cv2
 import numpy as np
 import tensorflow as tf
 

@@ -20,7 +20,7 @@ and run the following in your terminal to setup everything you need. See file `r
 
 `conda install -c conda-forge keras`
 
-`conda install -c conda-forge opencv`
+`conda install scikit-learn`
 
 `conda install matplotlib=2.0.2`
 

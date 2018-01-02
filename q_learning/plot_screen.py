@@ -1,7 +1,6 @@
 import numpy as np
 import gym
 import random
-import cv2
 import argparse
 import sys
 

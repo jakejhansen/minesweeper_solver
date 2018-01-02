@@ -10,7 +10,6 @@ from datetime import datetime
 import time
 from functools import reduce
 
-import cv2
 import numpy as np
 import tensorflow as tf
 

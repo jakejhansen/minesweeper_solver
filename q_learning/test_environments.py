@@ -2,7 +2,6 @@ import unittest
 import numpy as np
 import gym
 import random
-import cv2
 
 from environment import AtariGymEnvironment
 

@@ -3,7 +3,6 @@ This module contains class definitions for open ai gym environments.
 """
 
 import random
-import cv2
 
 # Alternative for grayscale and resize
 from skimage import color
