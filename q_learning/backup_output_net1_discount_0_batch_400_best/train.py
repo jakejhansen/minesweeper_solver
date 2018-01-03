@@ -172,7 +172,7 @@ if __name__ == "__main__":
     #parser.set_defaults(model_file="model-1700000")
     #parser.set_defaults(model_file="model-1720000")
     parser.set_defaults(eval_iterations=10000) # For finally testing the best model
-    parser.set_defaults(is_train=False) # Note, something is wrong with the play code!!!
+    parser.set_defaults(is_train=True) # Note, something is wrong with the play code!!!
     parser.set_defaults(show_game=False)
 
 

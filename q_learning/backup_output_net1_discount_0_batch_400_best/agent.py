@@ -14,7 +14,6 @@ import time
 import numpy as np
 import tensorflow as tf
 
-from environment import AtariGymEnvironment
 from environment import MinesweeperEnvironment
 
 
