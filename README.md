@@ -1,5 +1,7 @@
 # Minesweeper Solver - Using Deep Reinforcement Learning
 
+<img src="Results/slow.gif" width="200"><img src="Results/fast.gif" width="200">
+
 This repository contains:
 * The minesweeper game: Packed into a class that can be imported and actions can be taken on the game object which will return a new game state and a reward. 
 * Different agents: We have agents using both policy gradients, DQN and evolutionary strategies
