@@ -1,3 +1,4 @@
+#Base code was written by Jonas Busk - Modified to suit project by Jacob Jon Hansen
 import matplotlib.pyplot as plt
 import numpy as np
 import tensorflow as tf
