@@ -39,7 +39,7 @@ Manually change kernel to `Python (deep)` within the jupyter notebook if not alr
 
 
 ### Base
-`minesweeper_pygame.py`: older implementation using pygame, here you can input the choise in the console as (row,col) which an agent can also use to interact with the program.
+`minesweeper_pygame.py`: older implementation using pygame, here you can input the choice in the console as (row,col) which an agent can also use to interact with the program.
 
 `minesweeper_tk.py`: Up to date version which can display the game using the Tk library which proved to work best multi-platform. Again you can input an action as (row,col) in the console.
 
@@ -67,15 +67,15 @@ Run the script `minesweeper_old.py`. This is an older version but it alows you t
 The game takes the following input arguments:
 * `ROWS`: Number of rows in the game (default 10)
 * `COLS`: Number of columns in the game (default 10)
-* `OUT`: Which state representation is returned, can either be "FULL", "CONDENSED" or "IMAGE" (see desp below) (default "FULL")
+* `OUT`: Which state representation is returned, can either be "FULL", "CONDENSED" or "IMAGE" (see description below) (default "FULL")
 * `SIZEOFSQ`: The size of squares in pixels. The game is scaled according to your screen resolution but you can adjust this to increase or decrease the size. (default 100)
 * `MINES`: Number of mines on the field (default 13)
 * `interval`: If you want to generate games with varying number of mines, you can use this to sample uniformly around #MINES, i.e if MINES = 5 and interval = 2, your games will contain 3-7 mines chosen uniformly. (defualt 0)
 * `display`: True to display the game, false to just play it. (default False, leave false under training for much faster games)
 * 'rewards': The reward structure as dictionary. (default: rewards = {"win" : 1, "loss" : -1, "progress" : 0.9, "noprogress" : -0.3, "YOLO" : -0.3})
 
-### State Representationi
-The game can return 3 different representation of the current board state:
+### State Representation
+The game can return 3 different representations of the current board state:
 #### FULL
 Has the dimensions ROWS * COLS * 10 and is a one-hot encoded representation of the state. First 8 channels cointains the ont-hot encoded representation of the integers on the board, i.e channel 3 has a 1, if the field = 3, zero otherwise.
 
@@ -83,7 +83,7 @@ The 9. channel has 1 if the field is unknown, 0 otherwise.
 The 10. channel has 1 if the field is empty (i.e neither unknown or a number), 0 otherwise.
 
 #### CONDENSED
-Has the deimensions ROWS * COLS * 2 and is a condensed versioin of the FULL representation with the first 8. channels merged. 
+Has the dimensions ROWS * COLS * 2 and is a condensed version of the FULL representation with the first 8. channels merged. 
 
 The 1. channel has 0 if the field is unknown or empty, and value / 4 otherwise. 
 The 2. channel has 1 if unknown, 0 otherwise.
@@ -117,6 +117,6 @@ The program has the following default reward structure, that proved to work for 
 The rewards are given by the conditions:
 * win: win the game
 * loss: loss the game
-* progress: clear an unknown field, thus making progression towards solving the board
+* progress: clear an unknown field, thus making progress towards solving the board
 * noprogress: clicks an already discovered field, takes and action but doesn't make progress
-* YOLO: clicks an unknown field where all the neighbors are unknown, i.e it has no information if the field is a bomb or not. This loss was needed because when the mine density is low, the agent can figure out that it can just click on random fiels and collect the progress reward, with little chance to actually hit a bomb. 
+* YOLO: clicks an unknown field where all the neighbors are unknown, i.e it has no information if the field is a bomb or not. This loss was needed because when the mine density is low, the agent can figure out that it can just click on random fields and collect the progress reward, with little chance to actually hit a bomb. 
